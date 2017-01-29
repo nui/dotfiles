@@ -1,0 +1,63 @@
+#!/usr/bin/env zsh
+
+cd ${0:a:h}
+
+(( ! ${+NMK_HOME} )) && {
+    print -- '$NMK_HOME is unset'
+    exit 1
+}
+
+ZSH_COMPLETE_DIR=$ZDOTDIR/completion
+ZSH_RC_EXTRA_DIR=$ZDOTDIR/zshrc.extra.d
+
+[[ $OSTYPE == darwin* ]]
+is_darwin=$(( $? == 0))
+
+setup_gcloud_completion() {
+    local gcloud_path
+    local gcloud_opt_path
+    local installation_dir
+    local source_completion_zsh_inc
+    local linux_share_completion
+    gcloud_path=${commands[gcloud]}
+    gcloud_opt_path=$HOME/.opt/google-cloud-sdk/bin/gcloud
+    linux_share_completion=/usr/share/google-cloud-sdk/completion.zsh.inc
+    # Manual installation
+    if [[ $gcloud_path == $gcloud_opt_path ]]; then
+        installation_dir=${gcloud_path:h:h}
+        source_completion_zsh_inc=$installation_dir/completion.zsh.inc
+        ln -sf $source_completion_zsh_inc $ZSH_RC_EXTRA_DIR/google-cloud-sdk-completion.zsh
+    elif [[ -f $linux_share_completion ]]; then
+        ln -sf $linux_share_completion $ZSH_RC_EXTRA_DIR/google-cloud-sdk-completion.zsh
+    fi
+}
+
+setup_aws_completion() {
+    local aws_completer_path
+    local output_script_path
+    aws_completer_path=${commands[aws_completer]}
+    if [[ -f $aws_completer_path ]]; then
+        output_script_path=$ZSH_RC_EXTRA_DIR/aws-completion.zsh
+        rm -f $output_script_path
+        echo 'autoload bashcompinit && bashcompinit' >> $output_script_path
+        echo "complete -C '$aws_completer_path' aws" >> $output_script_path
+    fi
+}
+
+(( ${+commands[kubectl]} )) && kubectl completion zsh > $ZSH_COMPLETE_DIR/_kubectl
+(( ${+commands[nmk]} )) && nmk completions zsh > $ZSH_COMPLETE_DIR/_nmk
+(( ${+commands[nbox]} )) && nbox completions zsh > $ZSH_COMPLETE_DIR/_nbox
+(( ${+commands[gh]} )) && gh completion -s zsh > $ZSH_COMPLETE_DIR/_gh
+(( ${+commands[helm]} )) && helm completion zsh > $ZSH_COMPLETE_DIR/_helm
+(( ${+commands[cmctl]} )) && cmctl completion zsh > $ZSH_COMPLETE_DIR/_cmctl
+(( ${+commands[argocd]} )) && argocd completion zsh > $ZSH_COMPLETE_DIR/_argocd
+(( ${+commands[ykman]} )) &&  _YKMAN_COMPLETE=zsh_source ykman > $ZSH_COMPLETE_DIR/_ykman
+
+(( ${+commands[rustup]} )) && {
+    rustup completions zsh > $ZSH_COMPLETE_DIR/_rustup
+    cp $(rustc --print sysroot)/share/zsh/site-functions/_cargo $ZSH_COMPLETE_DIR/_cargo
+}
+
+(( ${+commands[gcloud]} )) && setup_gcloud_completion
+(( ${+commands[aws]} )) && setup_aws_completion
+

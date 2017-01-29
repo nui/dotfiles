@@ -17,3 +17,13 @@ sudo chmod 440 $sudo_conf
 # editor
 sudo update-alternatives --config editor
 ```
+
+
+***apt ssh proxy***
+```conf
+Acquire::http::Proxy "socks5h://127.0.0.1:3128/";
+Acquire::https::Proxy "socks5h://127.0.0.1:3128/";
+
+# vi: ft=conf
+```
+

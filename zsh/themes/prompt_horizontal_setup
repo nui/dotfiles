@@ -1,261 +1,389 @@
 # Horizontal by Nui Narongwet
 # MIT License
+# Clone of https://github.com/sindresorhus/pure with custom behavior
 
 # Naming convension
 # functions
-#    - snake case
-#    - prefix function name with _horizontal_
-#    - store function result in FUNCNAME_result variable
+#	- avoid function keyword
+#	- snake case
+#	- prefix function name with prompt_horizontal_
+#	- store function result in FUNCNAME_result variable
 
 
 # Set a plaintext of $1 without formatting
-function _horizontal_plaintext {
-    readonly zero_length='%([BSUbfksu]|([FB]|){*})'
-    typeset -g _horizontal_plaintext_result=${(S%%)1//$~zero_length/}
+prompt_horizontal_plaintext() {
+	readonly zero_length='%([BSUbfksu]|([FB]|){*})'
+	typeset -g prompt_horizontal_plaintext_result=${(S%%)1//$~zero_length/}
 }
 
-function _horizontal_reset_prompt {
-    # face color
-    readonly happy='green'
-    readonly sad='yellow'
+prompt_horizontal_reset_prompt() {
+	# face color
+	readonly happy='green'
+	readonly sad='red'
 
-    if ((${horizontal[color]})); then
-        # prompt face turn green if the previous command did exit with 0,
-        # otherwise turn yellow
-        PROMPT="%F{cyan} '--%f%B>%(1j. %F{red}%j!%f.) %(?.%F{$happy}:%).%F{$sad}:()%b%f "
-        # restore prompt highlighting if needed
-        if ((${#ZSH_HIGHLIGHT_HIGHLIGHTERS} == 0)); then
-            ZSH_HIGHLIGHT_HIGHLIGHTERS=($_horizontal_orig_zsh_highlight_highlighters)
-        fi
-        unset _horizontal_orig_zsh_highlight_highlighters
-    else
-        PROMPT=" '-->%(1j. %j!.) %(?.:%).:() "
-        # backup prompt highlighting
-        if ((${+_horizontal_orig_zsh_highlight_highlighters} == 0)); then
-            _horizontal_orig_zsh_highlight_highlighters=($ZSH_HIGHLIGHT_HIGHLIGHTERS)
-        fi
-        # and disable it
-        ZSH_HIGHLIGHT_HIGHLIGHTERS=()
-    fi
+	if ((${horizontal[color]})); then
+		# prompt face turn green if the previous command did exit with 0,
+		# otherwise turn yellow
+		PROMPT="%F{${horizontal[base_color]}} '--%f%B>%(1j. %F{red}%j!%f.) %(?.%F{$happy}:%).%F{$sad}:()%b%f "
+		# restore prompt highlighting if needed
+		if ((${#ZSH_HIGHLIGHT_HIGHLIGHTERS} == 0)); then
+			ZSH_HIGHLIGHT_HIGHLIGHTERS=($prompt_horizontal_orig_zsh_highlight_highlighters)
+		fi
+		unset prompt_horizontal_orig_zsh_highlight_highlighters
+	else
+		PROMPT=" '-->%(1j. %j!.) %(?.:%).:() "
+		# backup prompt highlighting
+		if ((${+prompt_horizontal_orig_zsh_highlight_highlighters} == 0)); then
+			prompt_horizontal_orig_zsh_highlight_highlighters=($ZSH_HIGHLIGHT_HIGHLIGHTERS)
+		fi
+		# and disable it
+		ZSH_HIGHLIGHT_HIGHLIGHTERS=()
+	fi
 }
 
 # Set a string that when combine with $1
 # its length is equal to
 #   - $COLUMNS if length of $1 <= $COLUMNS
 #   - $COLUMNS * 2 if length of $1 > $COLUMNS
-function _horizontal_gen_padding {
-    _horizontal_plaintext "${(j::)@}"
-    integer prompt_length=$#_horizontal_plaintext_result
-    integer n=$((COLUMNS - prompt_length))
-    ((n < 0)) && n=$((COLUMNS * 2 - prompt_length))
-    local IFS=${horizontal_fill_character:--}
-    if ((n > 0)); then
-        typeset -g _horizontal_gen_padding_result=${(l:$n:::)}
-    else
-        typeset -g _horizontal_gen_padding_result=
-    fi
+prompt_horizontal_gen_padding() {
+	prompt_horizontal_plaintext "${(j::)@}"
+	integer prompt_length=$#prompt_horizontal_plaintext_result
+	integer n=$((COLUMNS - prompt_length - 1))
+	((n < 0)) && n=$((COLUMNS * 2 - prompt_length))
+	local IFS=${horizontal[fill_character]}
+	if ((n > 0)); then
+		typeset -g prompt_horizontal_gen_padding_result=${(l:$n:::)}
+	else
+		typeset -g prompt_horizontal_gen_padding_result=
+	fi
 }
 
-function _horizontal_join_status {
-    local separator=${horizontal_status_separator:-"%F{cyan} | %f"}
-    local string
-    for item in ${@[1,-1]}; do string+=$separator$item; done
-    string=${string:${#separator}} # remove leading separator
-    typeset -g _horizontal_join_status_result=$string
+prompt_horizontal_join_status() {
+	local separator=${horizontal_status_separator:-"%F{${horizontal[base_color]}} | %f"}
+	local string
+	local item
+	for item in $@; do string+=$separator$item; done
+	string=${string:${#separator}} # remove leading separator
+	typeset -g prompt_horizontal_join_status_result=$string
 }
 
 # Turn number of seconds into human readable format
 #   78555 => 21h 49m 15s
-#    2781 => 46m 21s
-function _horizontal_human_time {
-    local human=""
-    local total_seconds=$1
-    local days=$(( total_seconds / 60 / 60 / 24 ))
-    local hours=$(( total_seconds / 60 / 60 % 24 ))
-    local minutes=$(( total_seconds / 60 % 60 ))
-    local seconds=$(( total_seconds % 60 ))
-    (( days > 0 )) && human+="${days}d "
-    (( hours > 0 )) && human+="${hours}h "
-    (( minutes > 0 )) && human+="${minutes}m "
-    human+="${seconds}s"
-    typeset -g _horizontal_human_time_result=$human
+#	2781 => 46m 21s
+prompt_horizontal_human_time() {
+	integer total_seconds=$1
+	integer days=$((total_seconds / 60 / 60 / 24))
+	integer hours=$((total_seconds / 60 / 60 % 24))
+	integer minutes=$((total_seconds / 60 % 60))
+	integer seconds=$((total_seconds % 60))
+	local result=""
+	((days > 0)) && result+="${days}d "
+	((hours > 0)) && result+="${hours}h "
+	((minutes > 0)) && result+="${minutes}m "
+	result+="${seconds}s"
+	typeset -g prompt_horizontal_human_time_result=$result
 }
 
-function _horizontal_exec_seconds {
-    local stop=$EPOCHSECONDS
-    local start=${_horizontal_cmd_timestamp:-$stop}
-    typeset -g _horizontal_exec_seconds_result=$((stop-start))
+prompt_horizontal_calculate_exec_seconds() {
+	typeset -g prompt_horizontal_exec_seconds=0
+	if [[ $prompt_horizontal_last_hook == preexec ]]; then
+		integer stop=$EPOCHSECONDS
+		integer start=${prompt_horizontal_preexec_start:-$stop}
+		prompt_horizontal_exec_seconds=$((stop-start))
+	fi
 }
 
-function _horizontal_git_dirty {
-    if ((${horizontal[git_untracked_dirty]})); then
-        test -z "$(command git status --porcelain --ignore-submodules -unormal)"
-    else
-        command git diff --no-ext-diff --quiet --exit-code
-    fi
-
-    if (($? == 0)); then
-        typeset -g _horizontal_git_dirty_result=
-    else
-        typeset -g _horizontal_git_dirty_result='*'
-    fi
+prompt_horizontal_calculate_idle_seconds() {
+	typeset -g prompt_horizontal_idle_seconds=0
+	if [[ $prompt_horizontal_last_hook == precmd ]]; then
+		integer stop=$EPOCHSECONDS
+		integer start=${prompt_horizontal_precmd_start:-$stop}
+		prompt_horizontal_idle_seconds=$((stop-start))
+	fi
 }
 
-function _horizontal_userhost {
-    if [[ ${horizontal[userhost]} == 1 ]]; then
-        typeset -g _horizontal_userhost_result="%b%f%n|${horizontal_hostname:-%m}%f: "
-    else
-        typeset -g _horizontal_userhost_result=
-    fi
+prompt_horizontal_git_dirty() {
+	if ((${horizontal[git_untracked_dirty]})); then
+		test -z "$(command git status --porcelain --ignore-submodules -unormal)"
+	else
+		command git diff --no-ext-diff --quiet --exit-code
+	fi
+
+	if (($? == 0)); then
+		typeset -g prompt_horizontal_git_dirty_result=
+	else
+		typeset -g prompt_horizontal_git_dirty_result='*'
+	fi
 }
 
-function prompt_horizontal_preexec {
-    typeset -g _horizontal_cmd_timestamp=$EPOCHSECONDS
-    # shows the executed command in the title when a process is active
-    print -n -P -- "\e]0;"
-    print -n -r -- "$2"
-    print -n -P -- "\a"
+prompt_horizontal_userhost() {
+	if [[ ${horizontal[userhost]} == 1 ]]; then
+		typeset -g prompt_horizontal_userhost_result="%b%f%n|${horizontal_hostname:-%m}%f: "
+	else
+		typeset -g prompt_horizontal_userhost_result=
+	fi
 }
 
-function prompt_horizontal_precmd {
-    _horizontal_reset_prompt
-    # shows the hostname
-    print -Pn -- '\e]0;%M\a'
 
-    local preprompt
-    local rpreprompt
+prompt_horizontal_set_title() {
+	setopt localoptions noshwordsplit
 
-    _horizontal_userhost
-    preprompt="%b%F{cyan}.-%B(${_horizontal_userhost_result}%B%F{yellow}%~%F{cyan})%b%F{cyan}-%f"
+	# emacs terminal does not support settings the title
+	(( ${+EMACS} )) && return
 
-    ((${horizontal[status]})) && {
+	(( ! ${horizontal[set_title]})) && return
 
-        local -a prompt_status
-        local -a rprompt_status
+	local -a opts
+	case $1 in
+		expand-prompt) opts=(-P);;
+		ignore-escape) opts=(-r);;
+	esac
 
-        local git_info
-        local timestamp
-
-        ((${horizontal[git]})) && vcs_info
-
-        # git branch and dirty status
-        ((${horizontal[git]})) && [[ -n $vcs_info_msg_0_ ]] && {
-            ((${horizontal[git_dirty]})) && _horizontal_git_dirty
-            git_info="${vcs_info_msg_0_}${_horizontal_git_dirty_result}"
-            [[ -n $git_info ]] && prompt_status+=$git_info
-        }
-
-        # pyenv python version
-        ((${horizontal[pyenv]})) && [[ -n $PYENV_VERSION ]] && {
-            # show python major and minor version
-            prompt_status+="Py ${(j|.|)${(s|.|)PYENV_VERSION}[1,2]}"
-        }
-
-        # python virtual environment
-        ((${horizontal[virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
-            prompt_status+="(${VIRTUAL_ENV:t}%)"
-        }
-
-        # last command execute time
-        ((${horizontal[exec_time]})) && {
-            _horizontal_exec_seconds
-            (( $_horizontal_exec_seconds_result > ${horizontal_cmd_max_exec_time:-5} )) && {
-                _horizontal_human_time $_horizontal_exec_seconds_result
-                prompt_status+="%F{yellow}$_horizontal_human_time_result%f"
-            }
-        }
-
-        ((${horizontal[timestamp]})) && {
-            _horizontal_exec_seconds
-            (($_horizontal_exec_seconds_result - ${horizontal_timestamp_threshold_seconds:-180} >= 0)) && {
-                strftime -s timestamp '%D %R' $EPOCHSECONDS
-                rprompt_status+=$timestamp
-            }
-        }
-
-        # put status to preprompt line
-        ((${#prompt_status} > 0)) && {
-            _horizontal_join_status $prompt_status
-            preprompt+=" $_horizontal_join_status_result "
-        }
-
-        # put rstatus to right of preprompt line
-        ((${#rprompt_status} > 0)) && {
-            _horizontal_join_status $rprompt_status
-            rpreprompt+=" $_horizontal_join_status_result %F{cyan}-%f"
-        }
-    }
-
-    # make a horizontal line
-    ((${horizontal[hr]})) && {
-        _horizontal_gen_padding $preprompt $rpreprompt
-        preprompt+="%F{cyan}${_horizontal_gen_padding_result}%f$rpreprompt"
-    }
-
-    # blank line before preprompt line
-    ((${horizontal[cozy]})) && preprompt="\n$preprompt"
-
-    ((${horizontal[color]} == 0)) && {
-        _horizontal_plaintext $preprompt
-        preprompt=$_horizontal_plaintext_result
-    }
-
-    # print preprompt line
-    print -P -- $preprompt
-
-    # reset value since `preexec` isn't always triggered
-    unset _horizontal_cmd_timestamp
+	# Set title atomically in one print statement so that it works
+	# when XTRACE is enabled.
+	print -n $opts $'\e]0;'${2}$'\a'
 }
 
-function prompt_horizontal_setup {
-    typeset -gA horizontal
-    # Enable/Disable horizontal features
-    : ${horizontal[color]=1}
-    : ${horizontal[cozy]=0}
-    : ${horizontal[exec_time]=1}
-    : ${horizontal[git]=1}
-    : ${horizontal[git_dirty]=1}
-    : ${horizontal[git_untracked_dirty]=1}
-    : ${horizontal[hr]=1}
-    : ${horizontal[pyenv]=1}
-    : ${horizontal[status]=1}
-    : ${horizontal[timestamp]=1}
-    : ${horizontal[userhost]=1}
-    : ${horizontal[virtualenv]=1}
+prompt_horizontal_preprompt_render() {
+	local preprompt
+	local rpreprompt
 
-    # horizontal_branch_symbol=''
-    # horizontal_cmd_max_exec_time=5
-    # horizontal_fill_character=-
-    # horizontal_hostname=
-    # horizontal_status_separator="%F{cyan} | %f"
-    # horizontal_timestamp_threshold_seconds=180
+	prompt_horizontal_userhost
+	preprompt="%b%F{${horizontal[base_color]}}.-%B(${prompt_horizontal_userhost_result}%B%F{blue}%~%F{${horizontal[base_color]}})%b%F{${horizontal[base_color]}}-%f"
 
-    # prevent percentage showing up
-    # if output doesn't end with a newline
-    export PROMPT_EOL_MARK=''
+	((${horizontal[status]})) && {
 
-    prompt_opts=(cr percent)
+		local -a prompt_status
+		local -a rprompt_status
 
-    zmodload zsh/datetime
-    autoload -Uz add-zsh-hook
-    autoload -Uz vcs_info
+		local git_info
+		local timestamp
 
-    add-zsh-hook precmd prompt_horizontal_precmd
-    add-zsh-hook preexec prompt_horizontal_preexec
+		integer has_human_time=0
 
-    local branch_symbol=${horizontal_branch_symbol-''}
-    zstyle ':vcs_info:*' enable git
-    zstyle ':vcs_info:*' use-simple true
-    # only export two msg variables from vcs_info
-    zstyle ':vcs_info:*' max-exports 2
-    # vcs_info_msg_0_ = ' %b' (for branch)
-    # vcs_info_msg_1_ = 'x%R' git top level (%R), x-prefix prevents creation of a named path (AUTO_NAME_DIRS)
-    zstyle ':vcs_info:git*' formats "$branch_symbol%b" 'x%R'
-    zstyle ':vcs_info:git*' actionformats "$branch_symbol%b|%a" 'x%R'
+		((${horizontal[git]})) && vcs_info
 
-    # disable auto updating PS1 by virtualenv
-    VIRTUAL_ENV_DISABLE_PROMPT=1
+		# git branch and dirty status
+		((${horizontal[git]})) && [[ -n $vcs_info_msg_0_ ]] && {
+			((${horizontal[git_dirty]})) && prompt_horizontal_git_dirty
+			git_info="${vcs_info_msg_0_}${prompt_horizontal_git_dirty_result}"
+			[[ -n $git_info ]] && prompt_status+=$git_info
+		}
+
+		# python virtual environment
+		((${horizontal[virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
+			prompt_status+="(${VIRTUAL_ENV:t}%)"
+		}
+
+		# last command execute time
+		((${horizontal[show_exec_idle_duration]})) && {
+			case $prompt_horizontal_last_hook in
+				precmd)
+					# render idle seconds
+					(($prompt_horizontal_idle_seconds >= ${horizontal[show_idle_time_threshold]})) && {
+						has_human_time=1
+						prompt_horizontal_human_time $prompt_horizontal_idle_seconds
+						prompt_status+="%F{blue}$prompt_horizontal_human_time_result%f"
+					}
+					;;
+				preexec)
+					# render exec seconds
+					(($prompt_horizontal_exec_seconds >= ${horizontal[show_exec_time_threshold]})) && {
+						has_human_time=1
+						prompt_horizontal_human_time $prompt_horizontal_exec_seconds
+						prompt_status+="%F{yellow}$prompt_horizontal_human_time_result%f"
+					}
+					;;
+			esac
+		}
+
+		# Show timestamp in rprompt
+		((${horizontal[timestamp]})) && {
+			(($has_human_time)) && {
+				strftime -s timestamp '%T %b %d' $EPOCHSECONDS
+				rprompt_status+=$timestamp
+			}
+		}
+
+		# put status to preprompt line
+		((${#prompt_status} > 0)) && {
+			prompt_horizontal_join_status $prompt_status
+			preprompt+=" $prompt_horizontal_join_status_result "
+		}
+
+		# put rstatus to right of preprompt line
+		((${#rprompt_status} > 0)) && {
+			prompt_horizontal_join_status $rprompt_status
+			rpreprompt+=" $prompt_horizontal_join_status_result %F{${horizontal[base_color]}}-%f"
+		}
+	}
+
+	# make a horizontal line
+	((${horizontal[hr]})) && {
+		prompt_horizontal_gen_padding $preprompt $rpreprompt
+		preprompt+="%F{${horizontal[base_color]}}${prompt_horizontal_gen_padding_result}%f$rpreprompt"
+	}
+
+	((${horizontal[color]} == 0)) && {
+		prompt_horizontal_plaintext $preprompt
+		preprompt=$prompt_horizontal_plaintext_result
+	}
+
+	local cleaned_ps1=$PROMPT
+	local -H MATCH MBEGIN MEND
+	if [[ $PROMPT = *$prompt_newline* ]]; then
+		# Remove everything from the prompt until the newline. This
+		# removes the preprompt and only the original PROMPT remains.
+		cleaned_ps1=${PROMPT##*${prompt_newline}}
+	fi
+	unset MATCH MBEGIN MEND
+
+	# Construct the new prompt with a clean preprompt.
+	local -ah ps1
+	ps1=(
+		$preprompt
+		$prompt_newline           # Separate preprompt and prompt.
+		$cleaned_ps1
+	)
+
+	PROMPT="${(j..)ps1}"
+
+	# Expand the prompt for future comparision.
+	local expanded_prompt
+	expanded_prompt="${(S%%)PROMPT}"
+
+	# blank line before preprompt line
+	((${horizontal[cozy]})) && print
+
+	if [[ $prompt_horizontal_last_prompt != $expanded_prompt ]]; then
+		# Redraw the prompt.
+		zle && zle .reset-prompt
+	fi
+
+	typeset -g prompt_horizontal_last_prompt=$expanded_prompt
+}
+
+prompt_horizontal_precmd() {
+	# calculate exec and idle seconds
+	prompt_horizontal_calculate_exec_seconds
+	prompt_horizontal_calculate_idle_seconds
+
+	prompt_horizontal_reset_prompt
+	# shows the hostname
+	if [[ -n $horizontal_hostname ]]; then
+		# our custom hostname override system hostname
+		prompt_horizontal_set_title ignore-escape $horizontal_hostname
+	else
+		prompt_horizontal_set_title expand-prompt ${(%):-%M}
+	fi
+
+	prompt_horizontal_preprompt_render
+
+	prompt_horizontal_last_hook=precmd
+	prompt_horizontal_set_precmd_start
+}
+
+prompt_horizontal_preexec() {
+	# Shows the executed command in the title when a process is active
+
+	if ((${horizontal[set_title_to_active_command]})); then
+		prompt_horizontal_set_title ignore-escape $2
+	fi
+
+	prompt_horizontal_last_hook=preexec
+	prompt_horizontal_set_preexec_start
+}
+
+prompt_horizontal_set_preexec_start() {
+	typeset -g prompt_horizontal_preexec_start=$EPOCHSECONDS
+}
+
+prompt_horizontal_set_precmd_start() {
+	typeset -g prompt_horizontal_precmd_start=$EPOCHSECONDS
+}
+
+prompt_horizontal_setup() {
+	typeset -gA horizontal
+	typeset -gA horizontal_default
+
+	# Determine last zsh hook that we use
+	# possible values :
+	#   - precmd
+	#   - preexec
+	typeset -g prompt_horizontal_last_hook
+	prompt_horizontal_last_hook=precmd
+	prompt_horizontal_set_precmd_start
+
+	# This is used to get default value in customization
+	horizontal_default[base_color]=cyan
+
+	# Enable/Disable horizontal features
+	for i in base_color; do
+		: ${horizontal[$i]:=$horizontal_default[$i]}
+	done
+	: ${horizontal[color]:=1}
+	: ${horizontal[cozy]:=1}
+	: ${horizontal[show_exec_idle_duration]:=1}
+	: ${horizontal[git]:=1}
+	: ${horizontal[git_dirty]:=1}
+	: ${horizontal[git_untracked_dirty]:=1}
+	: ${horizontal[hr]:=1}
+	: ${horizontal[status]:=1}
+	: ${horizontal[timestamp]:=1}
+	: ${horizontal[userhost]:=1}
+	: ${horizontal[virtualenv]:=1}
+	: ${horizontal[set_title]:=1}
+
+	: ${horizontal[show_exec_time_threshold]:=5}
+	: ${horizontal[show_idle_time_threshold]:=60}
+	: ${horizontal[fill_character]:=-}
+	# horizontal_branch_symbol=''
+	# horizontal_hostname=
+	# horizontal_status_separator="%F{${horizontal[base_color]}} | %f"
+
+	# Only set active command under tmux.
+	# The real terminal tab should default to hostname and command
+	if [[ -n $TMUX ]]; then
+		: ${horizontal[set_title_to_active_command]:=1}
+	else
+		: ${horizontal[set_title_to_active_command]:=0}
+	fi
+
+	# Don't set title over serial console.
+	case $TTY in
+		/dev/tty[S0-9]*) horizontal[set_title]=0;;
+	esac
+
+	# prevent percentage showing up
+	# if output doesn't end with a newline
+	export PROMPT_EOL_MARK=''
+
+	prompt_opts=(cr percent)
+
+	zmodload zsh/datetime
+	autoload -Uz add-zsh-hook
+	autoload -Uz vcs_info
+
+	add-zsh-hook precmd prompt_horizontal_precmd
+	add-zsh-hook preexec prompt_horizontal_preexec
+
+	local branch_symbol=${horizontal_branch_symbol-''}
+	zstyle ':vcs_info:*' enable git
+	zstyle ':vcs_info:*' use-simple true
+	# only export two msg variables from vcs_info
+	zstyle ':vcs_info:*' max-exports 2
+	# vcs_info_msg_0_ = ' %b' (for branch)
+	# vcs_info_msg_1_ = 'x%R' git top level (%R), x-prefix prevents creation of a named path (AUTO_NAME_DIRS)
+	zstyle ':vcs_info:git*' formats "$branch_symbol%b" 'x%R'
+	zstyle ':vcs_info:git*' actionformats "$branch_symbol%b|%a" 'x%R'
+
+	# disable git integration on alpine
+	[[ -e /etc/alpine-release ]] && horizontal[git]=0
+
+	# disable auto updating PS1 by virtualenv
+	export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 }
 
 prompt_horizontal_setup "$@"
-# vim: ft=zsh sw=4 sts=4 ts=4
+
+# vim: ft=zsh sw=4 sts=4 ts=4 noexpandtab

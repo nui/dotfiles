@@ -1,0 +1,35 @@
+# exclude following files and directories from nmk release
+
+# Git ignore file is needed by nmkup to preserve file across clean update
+# .gitignore
+.gitmodules
+
+# submodule unnecessary directories and files
+vim/bundle/dockerfile.vim/vim-dockerfile-example.png
+vim/bundle/nerdtree/screenshot.png
+vim/bundle/syntastic/_assets
+vim/bundle/tcomment_vim/spec
+vim/bundle/vim-visual-multi/test
+zsh/plugins/pure/async.zsh
+zsh/plugins/pure/readme.md
+zsh/plugins/pure/screenshot-title-cmd.png
+zsh/plugins/pure/screenshot.png
+zsh/plugins/zsh-async/async_test.zsh
+zsh/plugins/zsh-async/test.zsh
+zsh/plugins/zsh-syntax-highlighting/highlighters/brackets/test-data
+zsh/plugins/zsh-syntax-highlighting/highlighters/main/test-data
+zsh/plugins/zsh-syntax-highlighting/images
+zsh/plugins/zsh-syntax-highlighting/tests
+# our directories
+docker
+etc/macos
+etc/ssh
+nmk
+src
+zsh/src
+# our files
+.dotfilesignore
+.firebaserc
+etc/build.py
+firebase.json
+vim/update-plugins

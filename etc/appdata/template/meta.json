@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Docker daemon.json",
+        "file": "daemon.json"
+    },
+    {
+        "name": "Docker compose",
+        "file": "docker-compose.yml"
+    },
+    {
+        "name": "Nginx configuration",
+        "file": "default.conf"
+    }
+]

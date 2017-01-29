@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+set -e
+
+name='apt-cacher-ng'
+volume='apt-cacher-data'
+
+# sudo if user is not member of docker group
+[[ ${$(id -Gn)[(r)docker]} == docker ]] && docker=docker || docker=(sudo docker)
+
+# remove current running apt-cacher-ng
+$docker rm -f $name || true
+
+$docker run -d --name $name \
+    --restart=always \
+    --publish 3142:3142 \
+    --volume $volume:/var/cache/apt-cacher-ng \
+    sameersbn/apt-cacher-ng

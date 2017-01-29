@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+WORKSPACE_DIR=""
+if [ -d "$GITHUB_WORKSPACE" ]; then
+    WORKSPACE_DIR=$GITHUB_WORKSPACE
+else
+    WORKSPACE_DIR=$(git rev-parse --show-toplevel)
+fi
+
+cd $WORKSPACE_DIR/nmk
+
+tmp_file=$(mktemp)
+md5sum Cargo.lock > $tmp_file
+cd xtask
+git ls-files | xargs md5sum > $tmp_file
+md5sum $tmp_file | head -c 32

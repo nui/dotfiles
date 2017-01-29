@@ -6,12 +6,11 @@ endif
 let g:loaded_nmk = 1
 
 function! nmk#init() abort
-    call s:autodetect_neovim_python()
     call s:check_diff_mode()
 endfunction
 
 function nmk#runcmd(cmd) abort
-    if g:nmk_neovim
+    if has('nvim')
         exec 'tabnew | terminal '.a:cmd
     else
         exec 'Start '.a:cmd
@@ -33,7 +32,12 @@ function! nmk#yank_to_system_clipboard(type, ...) abort
         silent exe "normal! `[v`]y"
     endif
 
-    call setreg('+', @@)
+    if has('clipboard')
+        call setreg('+', @@)
+    endif
+    if !empty($TMUX)
+        call system('tmux loadb -', @@)
+    endif
 
     let &selection = sel_save
     let @@ = reg_save
@@ -51,19 +55,6 @@ function! nmk#set_local_tab_size(size) abort
     let &l:tabstop = a:size
 endfunction
 nnoremap <leader>slt :call nmk#set_local_tab_size()<left>
-
-function! s:autodetect_neovim_python()
-    if g:nmk_neovim
-        let python2 = expand('$HOME/.pyenv/shims/python2')
-        let python3 = expand('$HOME/.pyenv/shims/python3')
-        if !exists('g:python_host_prog') && filereadable(python2)
-            let g:python_host_prog = python2
-        endif
-        if !exists('g:python3_host_prog') && filereadable(python3)
-            let g:python3_host_prog = expand(python3)
-        endif
-    endif
-endfunction
 
 " Section: Mapping
 
@@ -123,14 +114,14 @@ nnoremap <C-l> gt
 
 nnoremap <leader>9 [c
 nnoremap <leader>0 ]c
-if g:nmk_neovim
+if has('nvim')
     nnoremap <M-9> [c
     nnoremap <M-0> ]c
 endif
 
 " Section: Color and font
 let s:background = 'dark'
-let s:colorscheme = g:nmk_256color ? 'Tomorrow-Night-Eighties' : 'default'
+let s:colorscheme = g:nmk_256color ? 'jellybeans' : 'default'
 
 if has('gui_running')
     if has('gui_gtk2')
@@ -141,7 +132,6 @@ if has('gui_running')
         let &guifont = 'Consolas:h11:cANSI'
     endif
     let s:background = 'light'
-    let s:colorscheme = 'solarized'
 endif
 
 if get(g:, 'nmk_set_colorscheme', 1)
@@ -199,6 +189,10 @@ if has('autocmd')
         autocmd FileType python setlocal foldmethod=indent
         " open all folds
         autocmd FileType python normal zR
+    augroup END
+
+    augroup yaml_files
+        autocmd FileType yaml setlocal shiftwidth=2 softtabstop=2 tabstop=2
     augroup END
 endif
 

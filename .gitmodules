@@ -1,9 +1,16 @@
 [submodule "zsh/plugins/zsh-syntax-highlighting"]
 	path = zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "zsh/plugins/docker-zsh-completion"]
-	path = zsh/plugins/docker-zsh-completion
-	url = https://github.com/felixr/docker-zsh-completion.git
+	branch = master
 [submodule "zsh/plugins/zsh-completions"]
 	path = zsh/plugins/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
+	branch = master
+[submodule "zsh/plugins/zsh-async"]
+	path = zsh/plugins/zsh-async
+	url = https://github.com/mafredri/zsh-async.git
+	branch = main
+[submodule "zsh/plugins/pure"]
+	path = zsh/plugins/pure
+	url = https://github.com/sindresorhus/pure.git
+	branch = main

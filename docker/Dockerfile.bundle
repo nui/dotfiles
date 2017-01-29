@@ -1,0 +1,10 @@
+FROM alpine
+
+RUN apk --update add coreutils curl git python3 xz
+
+WORKDIR /root
+
+RUN curl -sSL -o /root/build.py https://raw.githubusercontent.com/nui/dotfiles/main/etc/build.py
+
+ENTRYPOINT ["python3", "/root/build.py", "--no-upload", "--branch", "main"]
+

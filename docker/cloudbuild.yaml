@@ -1,0 +1,30 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - build
+    - -f
+    - docker/Dockerfile.bundle
+    - -t
+    - builder
+    - .
+  timeout: 60s
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - run
+    - -v
+    - /workspace:/workspace
+    - builder
+    - --branch
+    - $BRANCH_NAME
+    - --copy-to
+    - /workspace
+  timeout: 60s
+- name: 'gcr.io/cloud-builders/gsutil'
+  args:
+    - -h
+    - 'Content-Type: application/octet-stream'
+    - -h
+    - 'Cache-Control: no-store, no-transform'
+    - cp
+    - dotfiles.tar.xz
+    - gs://nmk.nuimk.com

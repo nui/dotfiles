@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+vcgencmd=vcgencmd
+if ((! ${+commands[vcgencmd]})); then
+    full_path=/opt/vc/bin/vcgencmd
+    if [[ -x $full_path ]]; then
+        vcgencmd=$full_path
+    else
+        echo "Not found vcgencmd"
+        exit 1
+    fi
+fi
+exec watch -x -n 1 $vcgencmd measure_temp
+

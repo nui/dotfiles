@@ -1,0 +1,47 @@
+name: Build and Upload
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build_and_upload:
+    runs-on: ubuntu-latest
+    name: Build dotfiles tarball
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build tar file
+        run: |
+          set -ex
+          rm -rf dist && mkdir dist
+          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          python3 etc/build.py --no-upload --branch "$branch" --copy-to dist
+      - name: Final artifact summary
+        run: |
+          set -e
+          (
+            echo '## Artifact files'
+            echo '```sh'
+            ls -lh dist
+            echo '```'
+          ) >> "$GITHUB_STEP_SUMMARY"
+      - name: "Authenticate to google cloud"
+        id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT }}
+      - name: 'Upload to public bucket'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: dist
+          parent: false
+          gzip: yes
+          destination: 'nmk.nuimk.com'
+          process_gcloudignore: false
