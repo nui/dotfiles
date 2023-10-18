@@ -51,6 +51,7 @@ setup_aws_completion() {
 (( ${+commands[helm]} )) && helm completion zsh > $ZSH_COMPLETE_DIR/_helm
 (( ${+commands[cmctl]} )) && cmctl completion zsh > $ZSH_COMPLETE_DIR/_cmctl
 (( ${+commands[argocd]} )) && argocd completion zsh > $ZSH_COMPLETE_DIR/_argocd
+(( ${+commands[cilium]} )) && cilium completion zsh > $ZSH_COMPLETE_DIR/_cilium
 (( ${+commands[ykman]} )) &&  _YKMAN_COMPLETE=zsh_source ykman > $ZSH_COMPLETE_DIR/_ykman
 
 (( ${+commands[rustup]} )) && {
