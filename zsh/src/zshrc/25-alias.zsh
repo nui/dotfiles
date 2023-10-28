@@ -48,6 +48,7 @@ alias help=run-help
 }
 
 autoload -Uz rf
+autoload -Uz use-gpg-ssh-agent
 
 # Productive Git aliases and functions
 (( ${+commands[git]} )) && {

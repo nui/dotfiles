@@ -1,0 +1,17 @@
+(( ${+commands[gpg-connect-agent]} )) && {
+    case $OSTYPE in
+        darwin*)
+            export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh
+            gpg-connect-agent /bye 2>/dev/null # start the agent if it is not running
+            ;;
+        linux*)
+            [[ -n $DISPLAY ]] && {
+                export SSH_AUTH_SOCK=/run/user/$UID/gnupg/S.gpg-agent.ssh # gpg > 2.1.12
+                echo UPDATESTARTUPTTY | gpg-connect-agent > /dev/null # fix pinentry and ssh problem in ubuntu 18.04
+                gpg-connect-agent /bye # start the agent if it is not running
+            }
+            ;;
+    esac
+}
+
+# vi: ft=zsh
