@@ -136,6 +136,10 @@ autoload -Uz use-gpg-ssh-agent
     alias vi='env -u VIMINIT vi'
 }
 
+(( ${+commands[kubectl]} )) && {
+    alias kfreepv="kubectl patch pv -p '{\"spec\":{\"claimRef\": null}}'"
+}
+
 [[ $OSTYPE == linux* ]] && (( ${+commands[docker]} )) && {
     # Run docker as root
     # note: since docker client is stated by root, it will read configuration from ~root/.docker
