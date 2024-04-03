@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # A helper script to start login shell.
 #
 # Compatibility: dash, bash, and zsh
