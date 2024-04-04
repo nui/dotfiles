@@ -14,6 +14,7 @@ try_start_login_shell() {
     local launcher
     launcher="$1"
     if [ ! -x "$launcher" ]; then
+        >&2 echo "$launcher" is not executable
         return 1
     fi
 
