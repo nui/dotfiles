@@ -13,6 +13,11 @@ try_start_login_shell() {
     local flags
     local launcher
     launcher="$1"
+
+    if [ ! -e "$launcher" ]; then
+        return
+    fi
+
     if [ ! -x "$launcher" ]; then
         >&2 echo "$launcher" is not executable
         return 1
@@ -35,6 +40,11 @@ unset HISTFILE
 try_start_login_shell ~/.nmk/bin/nmk
 try_start_login_shell ~/bin/nmk
 try_start_login_shell ~/.nmk/nmk/target/debug/launcher
+
+global_nmk=$(command -v nmk 2>/dev/null)
+if [ -x "$global_nmk" ]; then
+    try_start_login_shell "$global_nmk"
+fi
 
 # If this line is reached, we didn't find candidate launcher, fallback to re-execute itself.
 # N.B. MacOs doesn't have procfs, we silently fallback to /bin/sh
