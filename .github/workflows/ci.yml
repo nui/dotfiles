@@ -42,6 +42,6 @@ jobs:
         with:
           path: dist
           parent: false
-          gzip: yes
+          gzip: true
           destination: 'nmk.nuimk.com'
           process_gcloudignore: false
