@@ -11,7 +11,14 @@ sudo apt install tmux zsh neovim
 ```sh
 # Run the following in your terminal
 curl --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com | sh
-.nmk/bin/nmk
+
+# If you have GPG installed, a more secure option is available
+gpg --keyserver keyserver.ubuntu.com --recv-keys 0x551CFC14F537B532DED712EAE84E0669828CF62A
+curl -O https://nmkup.nuimk.com/nmkup-init.sh.asc
+if gpg --batch --yes -o nmkup-init.sh nmkup-init.sh.asc; then sh nmkup-init.sh; fi
+
+# start tumx
+~/.nmk/bin/nmk
 ```
 
 ## Directory structure
