@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -52,11 +53,21 @@ def read_plugin_tuple(repo):
             yield m.groups()
 
 
+def read_plugin_lock_db(repo):
+    lock_file = repo.joinpath('vim', 'plugins.lock.json')
+    return json.loads(open(lock_file, "rt").read())
+
+
 def clone_vim_plugins(repo):
     bundle_dir = repo.joinpath('vim', 'bundle')
+    db = read_plugin_lock_db(repo)
     for (name, url) in read_plugin_tuple(repo):
         print(f'Cloning {name}')
-        subprocess.run(['git', 'clone', '--quiet', url, name], cwd=bundle_dir)
+        subprocess.run(['git', 'clone', '--quiet', url, name], check=True, cwd=bundle_dir)
+        commit_id = db[name]
+        print(f'Resetting {name} to locked commit {commit_id}')
+        plugin_dir = bundle_dir.joinpath(name)
+        subprocess.run(['git', 'reset', '--hard', commit_id], check=True, cwd=plugin_dir)
 
 
 # Generate files that need information from git
