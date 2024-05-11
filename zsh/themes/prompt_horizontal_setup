@@ -160,6 +160,7 @@ prompt_horizontal_preprompt_render() {
 		local timestamp
 
 		integer has_human_time=0
+		integer has_virtualenv=0
 
 		((${horizontal[git]})) && vcs_info
 
@@ -172,7 +173,13 @@ prompt_horizontal_preprompt_render() {
 
 		# python virtual environment
 		((${horizontal[virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
+			has_virtualenv=1
 			prompt_status+="(${VIRTUAL_ENV:t}%)"
+		}
+
+		# conda environment
+		((${horizontal[conda]})) && [[ -n $CONDA_PREFIX ]] && (( has_virtualenv != 1 )) && {
+			prompt_status+="(${CONDA_PREFIX:t}%)"
 		}
 
 		# last command execute time
@@ -322,17 +329,18 @@ prompt_horizontal_setup() {
 		: ${horizontal[$i]:=$horizontal_default[$i]}
 	done
 	: ${horizontal[color]:=1}
+	: ${horizontal[conda]:=1}
 	: ${horizontal[cozy]:=1}
-	: ${horizontal[show_exec_idle_duration]:=1}
 	: ${horizontal[git]:=1}
 	: ${horizontal[git_dirty]:=1}
 	: ${horizontal[git_untracked_dirty]:=1}
 	: ${horizontal[hr]:=1}
+	: ${horizontal[set_title]:=1}
+	: ${horizontal[show_exec_idle_duration]:=1}
 	: ${horizontal[status]:=1}
 	: ${horizontal[timestamp]:=1}
 	: ${horizontal[userhost]:=1}
 	: ${horizontal[virtualenv]:=1}
-	: ${horizontal[set_title]:=1}
 
 	: ${horizontal[show_exec_time_threshold]:=5}
 	: ${horizontal[show_idle_time_threshold]:=60}
