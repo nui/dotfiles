@@ -17,8 +17,10 @@ gpg --keyserver keyserver.ubuntu.com --recv-keys 0x551CFC14F537B532DED712EAE84E0
 curl -O https://nmkup.nuimk.com/nmkup-init.sh.asc
 if gpg --batch --yes -o nmkup-init.sh nmkup-init.sh.asc; then sh nmkup-init.sh; fi
 
-# start tumx
+# To start tumx
 ~/.nmk/bin/nmk
+# To start zsh
+~/.nmk/login.sh
 ```
 
 ## Directory structure
