@@ -3,7 +3,7 @@
     "ctrlp.vim": "7c972cb19c8544c681ca345c64ec39e04f4651cc",
     "dockerfile.vim": "2a31e6bcea5977209c05c728c4253d82fd873c82",
     "jellybeans.vim": "ef83bf4dc8b3eacffc97bf5c96ab2581b415c9fa",
-    "nerdtree": "f3a4d8eaa8ac10305e3d53851c976756ea9dc8e8",
+    "nerdtree": "fbb71fcd90602e3ec77f40b864b5f9b437c496c5",
     "nginx.vim": "cffaec54f0c7f9518de053634413a20e90eac825",
     "python-syntax": "69760cb3accce488cc072772ca918ac2cbf384ba",
     "syntastic": "8d5e37c29cf5952fbf300b9230bffe424c61a488",
@@ -11,7 +11,7 @@
     "vim-airline": "ff0f9a45a5d81d2c8aa67601c264b18c4fe26b15",
     "vim-airline-themes": "a9aa25ce323b2dd04a52706f4d1b044f4feb7617",
     "vim-dispatch": "4c695bc052cad2ae6b980aebbe48d046466e27ae",
-    "vim-fugitive": "ce882460cf3db12e99f8bf579cbf99e331f6dd4f",
+    "vim-fugitive": "5b0347b5231a0f40abc311ccaf7bbf02d3ce3a5a",
     "vim-repeat": "24afe922e6a05891756ecf331f39a1f6743d3d5a",
     "vim-surround": "3d188ed2113431cf8dac77be61b842acb64433d9",
     "vim-visual-multi": "b84a6d42c1c10678928b0bf8327f378c8bc8af5a"
