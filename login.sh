@@ -5,7 +5,7 @@
 # Compatibility: dash, bash, and zsh
 
 if [ -n "$ZSH_VERSION" ]; then
-    # make zsh behave like bash on word split
+    # make zsh behave like bash on word spliting
     setopt sh_word_split
 fi
 
@@ -13,37 +13,42 @@ try_start_login_shell() {
     local flags
     local launcher
     launcher="$1"
+    shift 1
 
+    # return if file doesn't exist or broken symlink
     if [ ! -e "$launcher" ]; then
         return
     fi
 
+    # return if file is not executable (for some reason)
     if [ ! -x "$launcher" ]; then
         >&2 echo "$launcher" is not executable
-        return 1
+        return
     fi
 
     flags="--login --motd"
     if [ -n "$SSH_CONNECTION" ]; then
         flags="$flags --ssh"
     fi
-    exec "$launcher" $flags
+
+    # transfer execution to launcher
+    exec "$launcher" $flags "$@"
 }
 
 if [ -d "$NMK_HOME" ]; then
-    try_start_login_shell "$NMK_HOME/bin/nmk"
+    try_start_login_shell "$NMK_HOME/bin/nmk" "$@"
 fi
 
 # This make bash not remember this command to history when source this file
 unset HISTFILE
 
-try_start_login_shell ~/.nmk/bin/nmk
-try_start_login_shell ~/bin/nmk
-try_start_login_shell ~/.nmk/nmk/target/debug/launcher
+try_start_login_shell ~/.nmk/bin/nmk "$@"
+try_start_login_shell ~/bin/nmk "$@"
+try_start_login_shell ~/.nmk/nmk/target/debug/launcher "$@"
 
 global_nmk=$(command -v nmk 2>/dev/null)
 if [ -x "$global_nmk" ]; then
-    try_start_login_shell "$global_nmk"
+    try_start_login_shell "$global_nmk" "$@"
 fi
 
 # If this line is reached, we didn't find candidate launcher, fallback to re-execute itself.
