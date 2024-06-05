@@ -1,0 +1,51 @@
+#!/bin/zsh
+
+storage_class_name=$1
+directory=$2
+
+if [ $# -ne 2 ] || [ ! -d $2 ]; then
+    print "Usage: $0 storageClassName directory"
+    print ""
+    print "For example"
+    print ""
+    print "$0 zstd-btrfs-cache openebs"
+    exit 1
+fi
+
+used=$(kubectl get pvc -A -o json | jq -r ".items[].spec | select ( .storageClassName == \"$storage_class_name\" ) | .volumeName" | sort)
+used=(${(f)used})
+
+print -- "-- Directory used by pv --"
+print -l $used
+
+all=$(cd "$directory" && ls -1 -d pvc-*)
+all=(${(f)all})
+
+print "\n\n"
+print -- "-- All directory --"
+print -l $all
+
+unused=()
+
+for pv in $all; do
+    if ! (( $used[(Ie)$pv] )); then
+        # print
+        echo $pv
+        unused+=($pv)
+    fi
+done
+
+if (( $#unused > 0 )); then
+    print "\n\n"
+    print -- "-- Directory not used by pv --"
+
+    print "\n\n"
+    print -- "Remove it with following command"
+    print ""
+    print -- "cd $directory"
+    print -- "rm -rf $unused"
+else
+    print "\n\n"
+    print "There is no used directory"
+fi
+
