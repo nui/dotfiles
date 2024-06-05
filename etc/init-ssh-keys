@@ -1,0 +1,12 @@
+#!/bin/zsh
+
+cd ${0:A:h}
+
+mkdir -p -m 700 ~/.ssh
+
+keyfile=$HOME/.ssh/authorized_keys
+if [ ! -f $keyfile ]; then
+    sed '/^sk-ssh/!d' ssh-keys.asc | tee $keyfile
+    chmod 600 $keyfile
+fi
+
