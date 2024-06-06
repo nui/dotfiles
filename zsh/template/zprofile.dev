@@ -1,0 +1,63 @@
+export EDITOR=nvim
+export NMK_DEVELOPMENT=true
+
+
+case $OSTYPE in
+    darwin*)
+        export ANDROID_SDK_ROOT=~/Library/Android/sdk
+        # vim8 on osx need this
+        export LANG=en_US.UTF-8
+        # if this is unset, it print warning on linux remote machine
+        export LC_CTYPE=en_US.UTF-8
+        ;;
+    *)
+        export ANDROID_SDK_ROOT=~/Android/Sdk
+        ;;
+esac
+
+
+export NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.0.8775105
+
+# Override gsutil python version
+export CLOUDSDK_PYTHON=/usr/bin/python3
+
+# export LIBVIRT_DEFAULT_URI="qemu:///system"
+
+# run cross in rootless docker
+export CROSS_ROOTLESS_CONTAINER_ENGINE=1
+
+path=(
+    ~/bin
+    $NMK_HOME/bin
+    $path
+    ~/.cargo/bin
+    ~/.pyenv/bin
+    ~/.rbenv/bin
+    ~/.opt/google-cloud-sdk/bin
+    $ANDROID_SDK_ROOT/emulator
+    $ANDROID_SDK_ROOT/tools
+    $ANDROID_SDK_ROOT/tools/bin
+    $ANDROID_SDK_ROOT/platform-tools
+)
+
+# use gpg-agent as ssh-agent
+(( ${+commands[gpg-connect-agent]} )) && {
+    case $OSTYPE in
+        darwin*)
+            export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh
+            gpg-connect-agent /bye 2>/dev/null # start the agent if it is not running
+            ;;
+        linux*)
+            [[ -n $DISPLAY ]] && {
+                # export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh # gpg <= 2.1.12 & mac osx
+                export SSH_AUTH_SOCK=/run/user/$UID/gnupg/S.gpg-agent.ssh # gpg > 2.1.12
+                echo UPDATESTARTUPTTY | gpg-connect-agent > /dev/null # fix pinentry and ssh problem in ubuntu 18.04
+                gpg-connect-agent /bye # start the agent if it is not running
+                # Note for kubuntu
+                #   comment out use-ssh-agent in /etc/X11/Xsession.options to disable default ssh-agent
+            }
+            ;;
+    esac
+}
+
+# vi: ft=zsh
