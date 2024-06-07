@@ -1,0 +1,57 @@
+#!/bin/zsh
+
+set -e
+
+if [[ $# -lt 1 ]]; then
+    print "Usage: $0 argo-app-name [argocd-app-set-args..]"
+fi
+
+app_name=$1
+shift 1
+
+if ! argocd app get $app_name >/dev/null 2>&1; then
+    print "app $app_name doesn't exist or need to relogin"
+    return 1
+fi
+
+manifests=$(argocd app manifests $app_name)
+
+expr=(
+    'select(.kind == "StatefulSet")'
+    '.metadata.namespace'
+)
+namespace=$(echo $manifests | yq ${(j:|:)expr})
+
+expr=(
+    'select(.kind == "StatefulSet")'
+    '.metadata.labels'
+    'pick(["app.kubernetes.io/instance","app.kubernetes.io/name"])'
+    'to_entries'
+    'map(.key + "=" + .value)'
+    'join(",")'
+)
+app_labels=$(echo $manifests | yq ${(j:|:)expr})
+
+set -x
+
+# scale statefulset replicas to 0
+argocd app patch-resource $app_name \
+    --kind StatefulSet \
+    --patch '{"spec":{"replicas": 0}}'
+
+# wait for pod deletion
+kubectl -n $namespace wait \
+    --for=delete \
+    --timeout=180s \
+    -l $app_labels \
+    pods
+
+argocd app get $app_name --refresh
+
+if [ $# -gt 0 ]; then
+    argocd app set $app_name $@
+fi
+
+argocd app sync --prune $app_name
+argocd app wait $app_name
+
