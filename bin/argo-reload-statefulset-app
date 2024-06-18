@@ -27,7 +27,7 @@ expr=(
     'select(.kind == "StatefulSet")'
     '.metadata.namespace'
 )
-namespace=$(echo $manifests | yq ${(j:|:)expr})
+namespace=$(echo -E $manifests | yq ${(j:|:)expr})
 
 if [ -z "$namespace" ]; then
     print "can't find namespace"
@@ -42,7 +42,7 @@ expr=(
     'map(.key + "=" + .value)'
     'join(",")'
 )
-app_labels=$(echo $manifests | yq ${(j:|:)expr})
+app_labels=$(echo -E $manifests | yq ${(j:|:)expr})
 
 if [ -z "$app_labels" ]; then
     print "can't find app_labels"
