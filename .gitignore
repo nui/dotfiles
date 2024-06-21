@@ -20,6 +20,7 @@ nmk.toml
 /zsh/.zsh_history
 /zsh/.zsh_sessions/
 /zsh/completion/
+/zsh/local/
 /zsh/zprofile
 /zsh/zshenv.extra
 /zsh/zshrc.extra.d/
