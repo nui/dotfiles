@@ -18,7 +18,8 @@ setopt SHARE_HISTORY
 unsetopt FLOW_CONTROL
 stty -ixon # vim in remote ssh connection need this
 
-HISTFILE="${ZDOTDIR}/.zsh_history"
+# Respect existing HISTFILE
+HISTFILE="${HISTFILE:-${ZDOTDIR}/.zsh_history}"
 HISTSIZE=5000
 SAVEHIST=$HISTSIZE
 autoload -Uz compinit
