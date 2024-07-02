@@ -3,16 +3,28 @@ name: Build and Upload
 on:
   push:
     branches: ['main']
+  workflow_dispatch:
+    inputs:
+      runs-on:
+        description: Type of machine to run the job on
+        required: true
+        type: choice
+        default: dotfiles-public
+        options:
+          - dotfiles-public
+          - ubuntu-latest
 
 jobs:
   build_and_upload:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on || 'ubuntu-latest' }}
     name: Build dotfiles tarball
 
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
       id-token: 'write'
+
+    container: python:3-alpine
 
     steps:
       - uses: actions/checkout@v4
