@@ -24,14 +24,14 @@ jobs:
       contents: 'read'
       id-token: 'write'
 
-    container: python:3-alpine
+    container: python:3-slim
 
     steps:
       - uses: actions/checkout@v4
       - name: Build tar file
         run: |
           set -ex
-          apk add --update git
+          apt-get -yq update && apt install --no-install-recommends -yq git
           rm -rf dist && mkdir dist
           branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           python3 etc/build.py --no-upload --branch "$branch" --copy-to dist
