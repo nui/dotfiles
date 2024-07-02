@@ -31,6 +31,7 @@ jobs:
       - name: Build tar file
         run: |
           set -ex
+          apk add --update git
           rm -rf dist && mkdir dist
           branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           python3 etc/build.py --no-upload --branch "$branch" --copy-to dist
