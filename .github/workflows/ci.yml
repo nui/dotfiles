@@ -27,11 +27,14 @@ jobs:
     container: python:3-slim
 
     steps:
+      - name: Install git
+        run: |
+          set -ex
+          apt-get -yq update && apt install --no-install-recommends -yq git
       - uses: actions/checkout@v4
       - name: Build tar file
         run: |
           set -ex
-          apt-get -yq update && apt install --no-install-recommends -yq git
           rm -rf dist && mkdir dist
           branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           python3 etc/build.py --no-upload --branch "$branch" --copy-to dist
