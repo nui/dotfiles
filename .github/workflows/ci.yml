@@ -9,7 +9,7 @@ on:
         description: Type of machine to run the job on
         required: true
         type: choice
-        default: dotfiles-public
+        default: ubuntu-latest
         options:
           - dotfiles-public
           - ubuntu-latest
