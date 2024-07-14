@@ -24,7 +24,9 @@ jobs:
       contents: 'read'
       id-token: 'write'
 
-    container: python:3-slim
+    container:
+      image: python:3-slim
+      options: "-e BUILDKIT_HOST"
 
     steps:
       - name: Install git
