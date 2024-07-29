@@ -138,7 +138,10 @@ autoload -Uz use-gpg-ssh-agent
 }
 
 (( ${+commands[kubectl]} )) && {
-    alias kfreepv="kubectl patch pv -p '{\"spec\":{\"claimRef\": null}}'"
+    alias k-freepv="kubectl patch pv -p '{\"spec\":{\"claimRef\": null}}'"
+    local template
+    template='{{range .items}}{{range .spec.ports}}{{if .nodePort}}{{.nodePort}} name:{{.name}} protocol:{{.protocol}} port:{{.port}} targetPort:{{.targetPort}}{{"\n"}}{{end}}{{end}}{{end}}'
+    alias k-get-nodeport="kubectl get svc -o go-template=${(q)template}"
 }
 
 [[ $OSTYPE == linux* ]] && (( ${+commands[docker]} )) && {
