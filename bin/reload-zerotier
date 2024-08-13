@@ -1,0 +1,6 @@
+#!/bin/zsh
+set -e
+
+sudo launchctl unload /Library/LaunchDaemons/com.zerotier.one.plist
+sleep 5
+sudo launchctl load /Library/LaunchDaemons/com.zerotier.one.plist
