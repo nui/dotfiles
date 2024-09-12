@@ -9,6 +9,7 @@ autoload -Uz async && async
 setopt AUTO_PUSHD
 setopt DVORAK
 setopt EXTENDED_GLOB
+setopt EXTENDED_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
 setopt PUSHD_MINUS
