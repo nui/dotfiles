@@ -139,11 +139,13 @@ autoload -Uz use-gpg-ssh-agent
 }
 
 (( ${+commands[kubectl]} )) && {
+    autoload -Uz k-node-shutdown-cleanup
     alias k-freepv="kubectl patch pv -p '{\"spec\":{\"claimRef\": null}}'"
-    local template
-    template='{{range .items}}{{$namespace:=.metadata.namespace}}{{range .spec.ports}}{{if .nodePort}}{{.nodePort}} name:{{.name}} protocol:{{.protocol}} port:{{.port}} targetPort:{{.targetPort}} namespace:{{$namespace}}{{"\n"}}{{end}}{{end}}{{end}}'
-    alias k-get-nodeport="kubectl get svc -o go-template=${(q)template}"
-
+    () {
+        local template
+        template='{{range .items}}{{$namespace:=.metadata.namespace}}{{range .spec.ports}}{{if .nodePort}}{{.nodePort}} name:{{.name}} protocol:{{.protocol}} port:{{.port}} targetPort:{{.targetPort}} namespace:{{$namespace}}{{"\n"}}{{end}}{{end}}{{end}}'
+        alias k-get-nodeport="kubectl get svc -o go-template=${(q)template}"
+    }
     k-list-nodeports() {
         local template
         template='{{range .items}}{{$namespace:=.metadata.namespace}}{{range .spec.ports}}{{if .nodePort}}{{.nodePort}}{{","}}{{.targetPort}}{{","}}{{.name}}{{","}}{{$namespace}}{{","}}{{.protocol}}{{"\n"}}{{end}}{{end}}{{end}}'

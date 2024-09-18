@@ -1,0 +1,33 @@
+local template
+read -r -d '' template <<'EOT'
+{{- range .items -}}
+{{- $namespace := .metadata.namespace -}}
+{{- $name := .metadata.name -}}
+{{- if eq .status.reason "NodeShutdown" -}}
+{{- if eq .status.message "Pod was rejected: Pod was rejected as the node is shutting down." }}
+kubectl -n {{ $namespace }} delete pod {{ $name }}
+{{- end }}
+{{- end }}
+{{- if eq .status.reason "Terminated" -}}
+{{- if eq .status.message "Pod was terminated in response to imminent node shutdown." }}
+kubectl -n {{ $namespace }} delete pod {{ $name }}
+{{- end }}
+{{- end }}
+{{- if eq .status.phase "Failed" -}}
+{{- if eq .status.message "Pod was rejected: Predicate NodePorts failed" }}
+kubectl -n {{ $namespace }} delete pod {{ $name }}
+{{- end }}
+{{- end }}
+{{- if eq .status.phase "Succeeded" -}}
+{{- with (index .status.conditions 0) }}
+{{- if and (eq .reason "TerminationByKubelet" ) (eq .message "Pod was terminated in response to imminent node shutdown." ) }}
+kubectl -n {{ $namespace }} delete pod {{ $name }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+EOT
+local script
+script=$(kubectl get pod --all-namespaces -o go-template=$template)
+eval "$script"
+# vi: ft=zsh
