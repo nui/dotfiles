@@ -8,6 +8,7 @@ setopt EXTENDED_GLOB
 setopt EXTENDED_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
+setopt INTERACTIVE_COMMENTS  # allow copy paste command with comment
 setopt PUSHD_MINUS
 setopt SHARE_HISTORY
 
