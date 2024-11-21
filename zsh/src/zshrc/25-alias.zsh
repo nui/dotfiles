@@ -64,7 +64,9 @@ autoload -Uz use-gpg-ssh-agent
     alias gpr=' git pull --rebase'
     alias grrb=' git-reset-to-remote-branch'
 }
-(( ! ${+commands[delta]} )) && {
+
+# see https://dandavison.github.io/delta/environment-variables.html
+(( ! ${+commands[delta]} )) && [[ -z $GIT_PAGER ]] && {
     export GIT_PAGER='less -+F -+X -c'
 }
 
