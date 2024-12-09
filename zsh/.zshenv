@@ -30,8 +30,9 @@ fi
     )
     typeset -a additional_fpath
     additional_fpath=(
-        /usr/share/zsh/vendor-functions
+        /opt/homebrew/share/zsh/site-functions
         /usr/share/zsh/vendor-completions
+        /usr/share/zsh/vendor-functions
     )
     for dir in $additional_fpath; do
         if [[ -d $dir && ${fpath[(r)$dir]} != $dir ]]; then
