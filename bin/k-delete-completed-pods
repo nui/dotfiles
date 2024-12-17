@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+set -e
+kubectl get pod -A --field-selector=status.phase==Succeeded
+
+if read -q "choice?Delete above pods? (y/N): "; then
+    echo ""
+    kubectl delete pod -A --field-selector=status.phase==Succeeded
+fi
+
