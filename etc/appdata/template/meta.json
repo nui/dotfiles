@@ -1,11 +1,12 @@
 [
     {
-        "name": "Docker daemon.json",
-        "file": "daemon.json"
+        "name": "compose.yml",
+        "file": "compose.yml",
+        "language": "yaml"
     },
     {
-        "name": "Docker compose",
-        "file": "docker-compose.yml"
+        "name": "Docker daemon.json",
+        "file": "daemon.json"
     },
     {
         "name": "Nginx configuration",

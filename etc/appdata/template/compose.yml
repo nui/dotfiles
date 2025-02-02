@@ -1,0 +1,17 @@
+# See https://docs.docker.com/reference/compose-file
+name: project_name
+
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: _RANDOM_TOKEN_
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
