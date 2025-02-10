@@ -128,3 +128,8 @@ elif (( ${+commands[kstart]} )); then
     }
 fi
 
+if [ -f /etc/alpine-release ]; then
+    unalias cp
+    unalias grep
+    unalias ls
+fi
