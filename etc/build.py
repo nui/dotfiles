@@ -113,11 +113,22 @@ def delete_unwanted_files(repo):
     os.remove(archive_path)
 
     with tarfile.open(archive_path, mode='x') as archive:
+        ignored_files = list_ignored_files(repo)
+        ignored_dirs = list_ignored_dirs(repo)
+        included_files = list_included_files(repo)
         def tar_filter(tarinfo):
+            name = tarinfo.name
             ignored = any((
-                tarinfo.name.endswith('.git') and tarinfo.isdir(),
-                tarinfo.name in list_ignored_files(repo)
+                name.endswith('.git') and tarinfo.isdir(),
+                name in ignored_files,
+                name in ignored_dirs,
+                any((name.startswith(dir + '/') for dir in ignored_dirs))
             ))
+            if name in list_included_files(repo):
+                ignored = False
+            for file in included_files:
+                if file.startswith(name):
+                    ignored = False
             return tarinfo if not ignored else None
         add_all_to_tar(src=repo, filter=tar_filter, archive=archive)
     tmp_dir = Path(tempfile.mkdtemp(TMPDIR_SUFFIX))
@@ -139,11 +150,32 @@ def list_ignored_files(repo):
     lines = [line.strip() for line in open(ignore_file, 'rt').readlines()]
     files = []
     for line in lines:
-        if line.startswith('#') or line == '':
+        if line.startswith('#') or line.strip() == '':
+            continue
+        if not line.endswith("/"):
+            files.append(line)
+    return files
+
+def list_ignored_dirs(repo):
+    ignore_file = repo.joinpath('.dotfilesignore')
+    lines = [line.strip() for line in open(ignore_file, 'rt').readlines()]
+    dirs = []
+    for line in lines:
+        if line.startswith('#') or line.strip() == '':
+            continue
+        if line.endswith("/"):
+            dirs.append(line.removesuffix("/"))
+    return dirs
+
+def list_included_files(repo):
+    include_file = repo.joinpath('.dotfilesinclude')
+    lines = [line.strip() for line in open(include_file, 'rt').readlines()]
+    files = []
+    for line in lines:
+        if line.startswith('#') or line.strip() == '':
             continue
         files.append(line)
     return files
-
 
 def create_final_archive(workdir):
     mtime = int(datetime.now().timestamp())

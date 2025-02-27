@@ -1,0 +1,6 @@
+# include following files and directories
+
+vim/bundle/vim-airline-themes/autoload/airline/themes/jellybeans.vim
+zsh/plugins/zsh-completions/src/_nano
+zsh/plugins/zsh-completions/src/_tmuxinator
+zsh/plugins/zsh-completions/src/_wg-quick

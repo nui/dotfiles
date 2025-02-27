@@ -1,4 +1,4 @@
-# exclude following files and directories from nmk release
+# exclude following files and directories
 
 # Git ignore file is needed by nmkup to preserve file across clean update
 # .gitignore
@@ -30,7 +30,19 @@ src
 zsh/src
 # our files
 .dotfilesignore
+.dotfilesinclude
 .firebaserc
 etc/build.py
 firebase.json
+vim/bundle/ctrlp.vim/doc/ctrlp.cnx
+vim/bundle/nerdtree/CHANGELOG.md
+vim/bundle/tcomment_vim/CHANGES.TXT
+vim/bundle/vim-airline-themes/autoload/airline/themes/
+vim/bundle/vim-airline/CHANGELOG.md
+vim/bundle/vim-airline/test/
+vim/generate-plugin-lock.py
+vim/plugins
+vim/plugins.lock.json
 vim/update-plugins
+
+zsh/plugins/zsh-completions/src/
