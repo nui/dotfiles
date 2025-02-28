@@ -9,6 +9,11 @@
         "file": "daemon.json"
     },
     {
+        "name": "Dockerfile - debian",
+        "file": "Dockerfile.debian",
+        "language": "Dockerfile"
+    },
+    {
         "name": "Nginx configuration",
         "file": "default.conf"
     }
