@@ -9,14 +9,13 @@ on:
         description: Type of machine to run the job on
         required: true
         type: choice
-        default: ubuntu-latest
+        default: ubuntu-24.04
         options:
-          - dotfiles-public
-          - ubuntu-latest
+          - ubuntu-24.04
 
 jobs:
   build_and_upload:
-    runs-on: ${{ inputs.runs-on || 'ubuntu-latest' }}
+    runs-on: ${{ inputs.runs-on || 'ubuntu-24.04' }}
     name: Build dotfiles tarball
 
     # Add "id-token" with the intended permissions.
@@ -25,14 +24,9 @@ jobs:
       id-token: 'write'
 
     container:
-      image: python:3-slim
-      options: "-e BUILDKIT_HOST"
+      image: ghcr.io/${{ github.repository }}/workflow
 
     steps:
-      - name: Install git
-        run: |
-          set -ex
-          apt-get -yq update && apt install --no-install-recommends -yq git
       - uses: actions/checkout@v4
       - name: Build tar file
         run: |
@@ -40,6 +34,17 @@ jobs:
           rm -rf dist && mkdir dist
           branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           python3 etc/build.py --no-upload --branch "$branch" --copy-to dist
+      - name: Sign output files
+        shell: bash
+        env:
+          BINARY_SIGNING_KEY: ${{ secrets.BINARY_SIGNING_KEY }}
+        run: |
+          set -ex
+          files=(dotfiles.tar.xz dotfiles.tar.xz.sha256)
+          cd dist
+          for file in ${files[@]}; do
+            nmk ed25519 sign --key-env BINARY_SIGNING_KEY --file $file --output ${file}.sig
+          done
       - name: Final artifact summary
         run: |
           set -e
