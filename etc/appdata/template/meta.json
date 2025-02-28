@@ -6,11 +6,12 @@
     },
     {
         "name": "Docker daemon.json",
-        "file": "daemon.json"
+        "file": "daemon.json",
+        "language": "json"
     },
     {
-        "name": "Dockerfile - debian",
-        "file": "Dockerfile.debian",
+        "name": "Dockerfile - ubuntu",
+        "file": "Dockerfile.ubuntu",
         "language": "Dockerfile"
     },
     {
