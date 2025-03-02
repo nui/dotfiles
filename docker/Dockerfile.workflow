@@ -14,8 +14,8 @@ set -ex
 staging_dir=$(mktemp -d)
 cd $staging_dir
 xzfile=nmk-x86_64-unknown-linux-musl.xz
-curl -sSL -o $xzfile https://storage.googleapis.com/nmk.nuimk.com/releases/2025-02-28/$xzfile
-if echo "c474a4d55f72af6cd9b325bc2c608eda3bd86ba339afc7031326a829ef0d567f *$xzfile" | sha256sum -c -; then
+curl -sSL -o $xzfile https://github.com/nuimk/nmk-releases/releases/download/v2025.03.01/$xzfile
+if echo "f9222b7add8c245dd76a715f668c01114632ada60cb190e71d0048f1ef39dd9f *$xzfile" | sha256sum -c -; then
     unxz --stdout $xzfile > nmk
     install nmk /usr/local/bin/nmk
     rm nmk
