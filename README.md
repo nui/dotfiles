@@ -1,4 +1,4 @@
-# dotfiles
+# Dotfiles
 This repository contains my dot files and some scripts that I use everyday.
 
 ## System dependencies

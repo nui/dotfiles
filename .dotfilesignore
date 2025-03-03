@@ -21,6 +21,7 @@ zsh/plugins/zsh-syntax-highlighting/highlighters/brackets/test-data
 zsh/plugins/zsh-syntax-highlighting/highlighters/main/test-data
 zsh/plugins/zsh-syntax-highlighting/images
 zsh/plugins/zsh-syntax-highlighting/tests
+zsh/watchexec-merge-zshrc.sh
 # our directories
 docker
 etc/macos
