@@ -171,6 +171,11 @@ prompt_horizontal_preprompt_render() {
 			[[ -n $git_info ]] && prompt_status+=$git_info
 		}
 
+		# tmux named session
+		((${horizontal[tmux_named_session]})) && [[ -n $NMK_TMUX_NAMED_SESSION ]] && {
+			prompt_status+="${horizontal_tmux_symbol- }${NMK_TMUX_NAMED_SESSION:t}"
+		}
+
 		# python virtual environment
 		((${horizontal[virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
 			has_virtualenv=1
@@ -341,6 +346,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[timestamp]:=1}
 	: ${horizontal[userhost]:=1}
 	: ${horizontal[virtualenv]:=1}
+	: ${horizontal[tmux_named_session]:=1}
 
 	: ${horizontal[show_exec_time_threshold]:=5}
 	: ${horizontal[show_idle_time_threshold]:=60}
