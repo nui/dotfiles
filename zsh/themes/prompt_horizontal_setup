@@ -166,7 +166,7 @@ prompt_horizontal_preprompt_render() {
 		# tmux named session
 		((${horizontal[tmux_named_session]})) && [[ -n $NMK_TMUX_NAMED_SESSION ]] && {
 			symbol=${horizontal_symbol[tmux]}
-			((! ${horizontal[use_symbol]})) && symbol="T:"
+			((! ${horizontal[iconic_font]})) && symbol="T:"
 			prompt_status+="$symbol${NMK_TMUX_NAMED_SESSION:0:12}"
 		}
 
@@ -183,14 +183,14 @@ prompt_horizontal_preprompt_render() {
 		((${horizontal[virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
 			has_virtualenv=1
 			symbol=${horizontal_symbol[python]}
-			((! ${horizontal[use_symbol]})) && symbol="P:"
+			((! ${horizontal[iconic_font]})) && symbol="P:"
 			prompt_status+="$symbol${${VIRTUAL_ENV:t}:0:12}"
 		}
 
 		# conda environment
 		((${horizontal[conda]})) && [[ -n $CONDA_PREFIX ]] && (( has_virtualenv != 1 )) && {
 			symbol=${horizontal_symbol[conda]}
-			((! ${horizontal[use_symbol]})) && symbol="C:"
+			((! ${horizontal[iconic_font]})) && symbol="C:"
 			prompt_status+="$symbol${${CONDA_PREFIX:t}:0:12}"
 		}
 
@@ -355,7 +355,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[userhost]:=1}
 	: ${horizontal[virtualenv]:=1}
 	: ${horizontal[tmux_named_session]:=1}
-	: ${horizontal[use_symbol]:=1}
+	: ${horizontal[iconic_font]:=1}
 
 	: ${horizontal[show_exec_time_threshold]:=5}
 	: ${horizontal[show_idle_time_threshold]:=60}
@@ -395,7 +395,7 @@ prompt_horizontal_setup() {
 	add-zsh-hook preexec prompt_horizontal_preexec
 
 	local branch_symbol=${horizontal_symbol[branch]}
-	((! ${horizontal[use_symbol]})) && branch_symbol="G:"
+	((! ${horizontal[iconic_font]})) && branch_symbol="G:"
 	zstyle ':vcs_info:*' enable git
 	zstyle ':vcs_info:*' use-simple true
 	# only export two msg variables from vcs_info
