@@ -44,16 +44,17 @@ setup_aws_completion() {
     fi
 }
 
-(( ${+commands[kubectl]} )) && kubectl completion zsh > $ZSH_COMPLETE_DIR/_kubectl
-(( ${+commands[nmk]} )) && nmk completions zsh > $ZSH_COMPLETE_DIR/_nmk
-(( ${+commands[nbox]} )) && nbox completions zsh > $ZSH_COMPLETE_DIR/_nbox
+(( ${+commands[argocd]} )) && argocd completion zsh > $ZSH_COMPLETE_DIR/_argocd
+(( ${+commands[bat]} )) && bat --completion zsh > $ZSH_COMPLETE_DIR/_bat
+(( ${+commands[cilium]} )) && cilium completion zsh > $ZSH_COMPLETE_DIR/_cilium
+(( ${+commands[cmctl]} )) && cmctl completion zsh > $ZSH_COMPLETE_DIR/_cmctl
+(( ${+commands[docker]} )) && docker completion zsh > $ZSH_COMPLETE_DIR/_docker
 (( ${+commands[gh]} )) && gh completion -s zsh > $ZSH_COMPLETE_DIR/_gh
 (( ${+commands[helm]} )) && helm completion zsh > $ZSH_COMPLETE_DIR/_helm
-(( ${+commands[cmctl]} )) && cmctl completion zsh > $ZSH_COMPLETE_DIR/_cmctl
-(( ${+commands[argocd]} )) && argocd completion zsh > $ZSH_COMPLETE_DIR/_argocd
-(( ${+commands[cilium]} )) && cilium completion zsh > $ZSH_COMPLETE_DIR/_cilium
-(( ${+commands[ykman]} )) &&  _YKMAN_COMPLETE=zsh_source ykman > $ZSH_COMPLETE_DIR/_ykman
-(( ${+commands[docker]} )) && docker completion zsh > $ZSH_COMPLETE_DIR/_docker
+(( ${+commands[kubectl]} )) && kubectl completion zsh > $ZSH_COMPLETE_DIR/_kubectl
+(( ${+commands[nbox]} )) && nbox completions zsh > $ZSH_COMPLETE_DIR/_nbox
+(( ${+commands[nmk]} )) && nmk completions zsh > $ZSH_COMPLETE_DIR/_nmk
+(( ${+commands[ykman]} )) && _YKMAN_COMPLETE=zsh_source ykman > $ZSH_COMPLETE_DIR/_ykman
 
 (( ${+commands[rustup]} )) && {
     rustup completions zsh > $ZSH_COMPLETE_DIR/_rustup
