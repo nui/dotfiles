@@ -103,7 +103,7 @@ prompt_horizontal_calculate_idle_seconds() {
 }
 
 prompt_horizontal_git_dirty() {
-	if ((${horizontal[git_untracked_dirty]})); then
+	if ((${horizontal[git_untracked_is_dirty]})); then
 		test -z "$(command git status --porcelain --ignore-submodules -unormal)"
 	else
 		command git diff --no-ext-diff --quiet --exit-code
@@ -117,7 +117,7 @@ prompt_horizontal_git_dirty() {
 }
 
 prompt_horizontal_userhost() {
-	if [[ ${horizontal[userhost]} == 1 ]]; then
+	if [[ ${horizontal[show_user_and_host]} == 1 ]]; then
 		typeset -g prompt_horizontal_userhost_result="%b%f%n|${horizontal_hostname:-%m}%f: "
 	else
 		typeset -g prompt_horizontal_userhost_result=
@@ -160,55 +160,55 @@ prompt_horizontal_preprompt_render() {
 		local timestamp
 		local symbol
 
-		integer has_human_time=0
-		integer has_virtualenv=0
+		integer show_exec_or_idle_humantime=0
+		integer show_virtualenv_name=0
 
 		# tmux named session
-		((${horizontal[tmux_named_session]})) && [[ -n $NMK_TMUX_NAMED_SESSION ]] && {
+		((${horizontal[show_tmux_named_session]})) && [[ -n $NMK_TMUX_NAMED_SESSION ]] && {
 			symbol=${horizontal_symbol[tmux]}
 			((! ${horizontal[iconic_font]})) && symbol="T:"
 			prompt_status+="$symbol${NMK_TMUX_NAMED_SESSION:0:12}"
 		}
 
-		((${horizontal[git]})) && vcs_info
+		((${horizontal[show_git]})) && vcs_info
 
 		# git branch and dirty status
-		((${horizontal[git]})) && [[ -n $vcs_info_msg_0_ ]] && {
-			((${horizontal[git_dirty]})) && prompt_horizontal_git_dirty
+		((${horizontal[show_git]})) && [[ -n $vcs_info_msg_0_ ]] && {
+			((${horizontal[show_git_dirty_status]})) && prompt_horizontal_git_dirty
 			git_info="${vcs_info_msg_0_}${prompt_horizontal_git_dirty_result}"
 			[[ -n $git_info ]] && prompt_status+=$git_info
 		}
 
 		# python virtual environment
-		((${horizontal[virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
-			has_virtualenv=1
+		((${horizontal[show_virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
+			show_virtualenv_name=1
 			symbol=${horizontal_symbol[python]}
 			((! ${horizontal[iconic_font]})) && symbol="P:"
 			prompt_status+="$symbol${${VIRTUAL_ENV:t}:0:12}"
 		}
 
 		# conda environment
-		((${horizontal[conda]})) && [[ -n $CONDA_PREFIX ]] && (( has_virtualenv != 1 )) && {
+		((${horizontal[show_conda]})) && [[ -n $CONDA_PREFIX ]] && (( show_virtualenv_name != 1 )) && {
 			symbol=${horizontal_symbol[conda]}
 			((! ${horizontal[iconic_font]})) && symbol="C:"
 			prompt_status+="$symbol${${CONDA_PREFIX:t}:0:12}"
 		}
 
 		# last command execute time
-		((${horizontal[show_exec_idle_duration]})) && {
+		((${horizontal[show_exec_or_idle_duration]})) && {
 			case $prompt_horizontal_last_hook in
 				precmd)
 					# render idle seconds
-					(($prompt_horizontal_idle_seconds >= ${horizontal[show_idle_time_threshold]})) && {
-						has_human_time=1
+					(($prompt_horizontal_idle_seconds >= ${horizontal_threshold[show_idle_duration]})) && {
+						show_exec_or_idle_humantime=1
 						prompt_horizontal_human_time $prompt_horizontal_idle_seconds
 						prompt_status+="%F{blue}$prompt_horizontal_human_time_result%f"
 					}
 					;;
 				preexec)
 					# render exec seconds
-					(($prompt_horizontal_exec_seconds >= ${horizontal[show_exec_time_threshold]})) && {
-						has_human_time=1
+					(($prompt_horizontal_exec_seconds >= ${horizontal_threshold[show_exec_duration]})) && {
+						show_exec_or_idle_humantime=1
 						prompt_horizontal_human_time $prompt_horizontal_exec_seconds
 						prompt_status+="%F{yellow}$prompt_horizontal_human_time_result%f"
 					}
@@ -217,8 +217,8 @@ prompt_horizontal_preprompt_render() {
 		}
 
 		# Show timestamp in rprompt
-		((${horizontal[timestamp]})) && {
-			(($has_human_time)) && {
+		((${horizontal[show_timestamp]})) && {
+			(($show_exec_or_idle_humantime)) && {
 				strftime -s timestamp '%T %b %d' $EPOCHSECONDS
 				rprompt_status+=$timestamp
 			}
@@ -325,6 +325,7 @@ prompt_horizontal_setup() {
 	typeset -gA horizontal
 	typeset -gA horizontal_default
 	typeset -gA horizontal_symbol
+	typeset -gA horizontal_threshold
 
 	# Determine last zsh hook that we use
 	# possible values :
@@ -341,32 +342,35 @@ prompt_horizontal_setup() {
 	for i in base_color; do
 		: ${horizontal[$i]:=$horizontal_default[$i]}
 	done
+	# feature toggle section
 	: ${horizontal[color]:=1}
-	: ${horizontal[conda]:=1}
 	: ${horizontal[cozy]:=1}
-	: ${horizontal[git]:=1}
-	: ${horizontal[git_dirty]:=1}
-	: ${horizontal[git_untracked_dirty]:=1}
 	: ${horizontal[hr]:=1}
-	: ${horizontal[set_title]:=1}
-	: ${horizontal[show_exec_idle_duration]:=1}
-	: ${horizontal[status]:=1}
-	: ${horizontal[timestamp]:=1}
-	: ${horizontal[userhost]:=1}
-	: ${horizontal[virtualenv]:=1}
-	: ${horizontal[tmux_named_session]:=1}
 	: ${horizontal[iconic_font]:=1}
+	: ${horizontal[set_title]:=1}
+	: ${horizontal[show_conda]:=1}
+	: ${horizontal[show_exec_or_idle_duration]:=1}
+	: ${horizontal[show_git]:=1}
+	: ${horizontal[show_git_dirty_status]:=1}
+	: ${horizontal[show_timestamp]:=1}
+	: ${horizontal[show_tmux_named_session]:=1}
+	: ${horizontal[show_user_and_host]:=1}
+	: ${horizontal[show_virtualenv]:=1}
+	: ${horizontal[status]:=1}
 
-	: ${horizontal[show_exec_time_threshold]:=5}
-	: ${horizontal[show_idle_time_threshold]:=60}
+
+	# configuration section
+	# commented out values are used as example configuration value
 	: ${horizontal[fill_character]:=-}
-	# horizontal_hostname=
+	: ${horizontal[git_untracked_is_dirty]:=1}
+	# horizontal_hostname=my-host-name
 	# horizontal_status_separator="%F{${horizontal[base_color]}} | %f"
-	# symbols
-	: ${horizontal_symbol[branch]:=}
 	: ${horizontal_symbol[conda]:= }
+	: ${horizontal_symbol[git_branch]:=}
 	: ${horizontal_symbol[python]:=󰌠 }
 	: ${horizontal_symbol[tmux]:= }
+	: ${horizontal_threshold[show_exec_duration]:=5}
+	: ${horizontal_threshold[show_idle_duration]:=60}
 
 	# Only set active command under tmux.
 	# The real terminal tab should default to hostname and command
@@ -389,12 +393,21 @@ prompt_horizontal_setup() {
 
 	zmodload zsh/datetime
 	autoload -Uz add-zsh-hook
-	autoload -Uz vcs_info
+
+	local load_vcs_result
+	load_vcs_result=$(autoload -Uz +X vcs_info 2>&1)
+	if [[ $load_vcs_result == *"function definition file not found"* ]]; then
+		# disable git integration
+		# on alpine linux, we need zsh-vcs package
+		horizontal[show_git]=0
+	else
+		autoload -Uz vcs_info
+	fi
 
 	add-zsh-hook precmd prompt_horizontal_precmd
 	add-zsh-hook preexec prompt_horizontal_preexec
 
-	local branch_symbol=${horizontal_symbol[branch]}
+	local branch_symbol=${horizontal_symbol[git_branch]}
 	((! ${horizontal[iconic_font]})) && branch_symbol="G:"
 	zstyle ':vcs_info:*' enable git
 	zstyle ':vcs_info:*' use-simple true
@@ -404,9 +417,6 @@ prompt_horizontal_setup() {
 	# vcs_info_msg_1_ = 'x%R' git top level (%R), x-prefix prevents creation of a named path (AUTO_NAME_DIRS)
 	zstyle ':vcs_info:git*' formats "$branch_symbol%b" 'x%R'
 	zstyle ':vcs_info:git*' actionformats "$branch_symbol%b|%a" 'x%R'
-
-	# disable git integration on alpine
-	[[ -e /etc/alpine-release ]] && horizontal[git]=0
 
 	# disable auto updating PS1 by virtualenv
 	export PYENV_VIRTUALENV_DISABLE_PROMPT=1
