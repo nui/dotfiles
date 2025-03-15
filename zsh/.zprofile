@@ -1,7 +1,7 @@
 # By default, tmux windows are login shell.
 # If zprofile is already sourced. It should not be sourced again.
-# NMK_PROFILE_INITIATED is set and check to prevent above situation.
-if [[ $NMK_PROFILE_INITIATED != true ]]; then
+# NMK_PROFILE_INITIALIZED is set and check to prevent above situation.
+if [[ $NMK_PROFILE_INITIALIZED != true ]]; then
     if [[ -e $NMK_LAUNCHER_PATH ]]; then
         # Launcher should already initialized required variables.
     else
@@ -21,6 +21,6 @@ if [[ $NMK_PROFILE_INITIATED != true ]]; then
     if [[ -e $ZDOTDIR/zprofile ]]; then
         source $ZDOTDIR/zprofile
     fi
-    export NMK_PROFILE_INITIATED=true
+    export NMK_PROFILE_INITIALIZED=true
 fi
 # vi: ft=zsh
