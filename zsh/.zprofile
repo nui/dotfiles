@@ -1,7 +1,7 @@
 # By default, tmux windows are login shell.
 # If zprofile is already sourced. It should not be sourced again.
 # NMK_PROFILE_INITIALIZED is set and check to prevent above situation.
-if [[ $NMK_PROFILE_INITIALIZED != true ]]; then
+if [[ $NMK_PROFILE_INITIALIZED != "1" ]]; then
     if [[ -e $NMK_LAUNCHER_PATH ]]; then
         # Launcher should already initialized required variables.
     else
@@ -10,17 +10,19 @@ if [[ $NMK_PROFILE_INITIALIZED != true ]]; then
         #   - ssh login to linux that doesn't call launcher
         #   - newly setup linux
 
-        # In our setup, ZDOTDIR always under NMK_HOME
-        # N.B. This probably set wrong NMK_HOME if ZDOTDIR is symbolic link.
-        (( ! ${+NMK_HOME} )) && export NMK_HOME=${ZDOTDIR:h}
-        # I think this is worth to hard coded.
-        # It may not work if NMK_HOME contains spaces.
-        (( ! ${+VIMINIT} )) && export VIMINIT='source $NMK_HOME/vim/init.vim'
+        # Setup required variables in case if zsh is not started from our launcher
+
+        (( ! ${+NMK_HOME} )) && {
+            # In our setup, ZDOTDIR always under NMK_HOME
+            # :A modifier is used to follow symlink correctly
+            export NMK_HOME=${ZDOTDIR:A:h}
+        }
+        (( ! ${+VIMINIT} )) && export VIMINIT="source ${NMK_HOME:q}/vim/init.vim"
     fi
 
     if [[ -e $ZDOTDIR/zprofile ]]; then
         source $ZDOTDIR/zprofile
     fi
-    export NMK_PROFILE_INITIALIZED=true
+    export NMK_PROFILE_INITIALIZED=1
 fi
 # vi: ft=zsh
