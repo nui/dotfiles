@@ -4,6 +4,9 @@
 #
 # Compatibility: dash, bash, and zsh
 
+# This make bash not put following commands in history when sourcing this file
+unset HISTFILE
+
 if [ -n "$ZSH_VERSION" ]; then
     # make zsh behave like bash on word spliting
     setopt sh_word_split
@@ -26,9 +29,9 @@ try_start_login_shell() {
         return
     fi
 
-    flags="--login --motd"
+    flags="--login"
     if [ -n "$SSH_CONNECTION" ]; then
-        flags="$flags --ssh"
+        flags="$flags --ssh --motd"
     fi
 
     # transfer execution to launcher
@@ -39,12 +42,9 @@ if [ -d "$NMK_HOME" ]; then
     try_start_login_shell "$NMK_HOME/bin/nmk" "$@"
 fi
 
-# This make bash not remember this command to history when source this file
-unset HISTFILE
-
+# well known locations
 try_start_login_shell ~/.nmk/bin/nmk "$@"
 try_start_login_shell ~/bin/nmk "$@"
-try_start_login_shell ~/.nmk/nmk/target/debug/launcher "$@"
 
 global_nmk=$(command -v nmk 2>/dev/null)
 if [ -x "$global_nmk" ]; then
@@ -52,7 +52,7 @@ if [ -x "$global_nmk" ]; then
 fi
 
 # If this line is reached, we didn't find candidate launcher, fallback to re-execute itself.
-# N.B. MacOs doesn't have procfs, we silently fallback to /bin/sh
+# N.B. MacOs doesn't have procfs, we fallback to /bin/sh
 current_exe=$(readlink -f /proc/$$/exe)
 if [ ! -e "$current_exe" ]; then
     current_exe=/bin/sh
