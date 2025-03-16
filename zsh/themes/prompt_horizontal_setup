@@ -272,7 +272,16 @@ prompt_horizontal_preprompt_render() {
 	expanded_prompt="${(S%%)PROMPT}"
 
 	# blank line before preprompt line
-	((${horizontal[cozy]})) && print
+	((${horizontal[cozy]})) && {
+		typeset -g prompt_horizontal_cozy_is_first_line
+		: ${prompt_horizontal_cozy_is_first_line:=1}
+		if (( prompt_horizontal_cozy_is_first_line == 1 )); then
+			((${horizontal[cozy_first_line]})) && print
+			prompt_horizontal_cozy_is_first_line=0
+		else
+			print
+		fi
+	}
 
 	if [[ $prompt_horizontal_last_prompt != $expanded_prompt ]]; then
 		# Redraw the prompt.
@@ -363,6 +372,7 @@ prompt_horizontal_setup() {
 	# commented out values are used as example configuration value
 	: ${horizontal[fill_character]:=-}
 	: ${horizontal[git_untracked_is_dirty]:=1}
+	: ${horizontal[cozy_first_line]:=0}
 	# horizontal_hostname=my-host-name
 	# horizontal_status_separator="%F{${horizontal[base_color]}} | %f"
 	: ${horizontal_symbol[conda]:= }
