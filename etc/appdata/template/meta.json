@@ -17,5 +17,10 @@
     {
         "name": "Nginx configuration",
         "file": "default.conf"
+    },
+    {
+        "name": "Apt proxy",
+        "file": "apt.conf",
+        "language": "sh"
     }
 ]
