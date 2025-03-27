@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gha-runner
+  labels:
+    app.kubernetes.io/name: gha-runner
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  serviceName: serviceName
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gha-runner
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+      labels:
+        app.kubernetes.io/name: gha-runner
+    spec:
+      enableServiceLinks: false
+      imagePullSecrets:
+      - name: harbor-nuimk-com-regcred
+      serviceAccountName: nuimk-runner
+      automountServiceAccountToken: false
+      containers:
+      - name: docker
+        image: docker:dind
+        imagePullPolicy: Always
+        env:
+        - name: BUILDKIT_HOST
+          value: tcp://127.0.0.1:58183
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        envFrom:
+        - configMapRef:
+            name: configmap-name
+        - secretRef:
+            name: secret-name
+        command:
+        - docker-init
+        args:
+        - dockerd
+        livenessProbe:
+          exec:
+            command:
+            - curl
+          initialDelaySeconds: 5
+          periodSeconds: 60
+        volumeMounts:
+        - mountPath: /home/user/.config/docker
+          name: docker
+          subPath: config
+          readOnly: true
+        resources:
+          limits:
+            cpu: "20"
+            memory: 32Gi
+          requests:
+            cpu: "1"
+            memory: 100Mi
+        securityContext:
+          privileged: true
+          readOnlyRootFilesystem: true
+          appArmorProfile:
+            type: Unconfined
+          seccompProfile:
+            type: Unconfined
+      initContainers:
+      - name: init-buildkit
+        image: harbor.nuimk.com/images/buildkit:v0.20.2-user-1010
+        imagePullPolicy: IfNotPresent
+        command:
+        - /scripts/init-buildkit.sh
+      securityContext:
+        runAsUser: 1010
+        runAsGroup: 1010
+        fsGroup: 1010
+        runAsNonRoot: true
+        fsGroupChangePolicy: "OnRootMismatch"
+      volumes:
+      - name: scripts
+        configMap:
+          name: nuimk-runner-scripts
+          defaultMode: 0755
+      - name: buildkit-config
+        configMap:
+          name: nuimk-runner-buildkit
+      - name: token
+        secret:
+          secretName: nuimk-gha-secret
+      - name: run
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Mi
+      - name: projected
+        projected:
+          sources:
+          - downwardAPI:
+              items:
+              - path: "podinfo/name"
+                fieldRef:
+                  fieldPath: metadata.name
+      # ephemeral volume
+      - name: tmp
+        ephemeral:
+          volumeClaimTemplate:
+            metadata:
+              labels:
+                app.kubernetes.io/name: gha-runner
+            spec:
+              accessModes:
+              - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 20Gi
+              storageClassName: default
+      # volume from pvc
+      - name: actions-runner
+        persistentVolumeClaim:
+          claimName: nuimk-runner-actions-runner
+      nodeSelector:
+        kubernetes.io/hostname: tempest
+  volumeClaimTemplates:
+  - metadata:
+      name: docker
+      labels:
+        app.kubernetes.io/name: gha-runner
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 32Gi
+      storageClassName: default

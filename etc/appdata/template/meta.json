@@ -22,5 +22,10 @@
         "name": "Apt proxy",
         "file": "apt.conf",
         "language": "sh"
+    },
+    {
+        "name": "k8s statefulset",
+        "file": "k8s-statefulset.yml",
+        "language": "yaml"
     }
 ]
