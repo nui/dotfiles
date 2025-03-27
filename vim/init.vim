@@ -41,7 +41,9 @@ set nowrap  " don't wrap lines
 set nowritebackup
 set number  " always show line numbers
 let &omnifunc = 'syntaxcomplete#Complete'
-let &pastetoggle = '<leader><C-p>'
+" let &pastetoggle = '<leader><C-p>'
+nnoremap <silent> <leader><C-p> :set paste!<cr>
+inoremap <silent> <leader><C-p> <esc>:set paste!<cr>i
 " search
 set hlsearch
 set incsearch  " show search matches as you type
