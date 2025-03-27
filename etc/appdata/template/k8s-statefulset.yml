@@ -17,6 +17,7 @@ spec:
         prometheus.io/scrape: 'true'
       labels:
         app.kubernetes.io/name: gha-runner
+    # See https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/
     spec:
       enableServiceLinks: false
       imagePullSecrets:
@@ -80,6 +81,7 @@ spec:
         fsGroup: 1010
         runAsNonRoot: true
         fsGroupChangePolicy: "OnRootMismatch"
+        allowPrivilegeEscalation: false
       volumes:
       - name: scripts
         configMap:
