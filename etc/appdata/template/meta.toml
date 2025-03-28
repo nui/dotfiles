@@ -1,0 +1,29 @@
+[[templates]]
+name = "compose.yml"
+file = "files/compose.yml"
+language = "yaml"
+
+[[templates]]
+name = "Docker daemon.json"
+file = "files/compose.yml"
+language = "json"
+
+[[templates]]
+name = "Dockerfile - ubuntu"
+file = "files/Dockerfile.ubuntu"
+language = "Dockerfile"
+
+[[templates]]
+name = "Nginx configuration"
+file = "files/default.conf"
+
+[[templates]]
+name = "Apt proxy"
+file = "files/apt.conf"
+language = "sh"
+
+[[templates]]
+name = "k8s statefulset"
+file = "files/k8s-statefulset.yml"
+language = "yaml"
+lua = { file = "lua/k8s.lua" }
