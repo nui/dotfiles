@@ -5,7 +5,7 @@ language = "yaml"
 
 [[templates]]
 name = "Docker daemon.json"
-file = "files/compose.yml"
+file = "files/daemon.json"
 language = "json"
 
 [[templates]]
