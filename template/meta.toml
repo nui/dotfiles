@@ -14,8 +14,9 @@ file = "files/Dockerfile.ubuntu"
 language = "Dockerfile"
 
 [[templates]]
-name = "Nginx configuration"
+name = "nginx"
 file = "files/default.conf"
+language = "nginx"
 
 [[templates]]
 name = "Apt proxy"
