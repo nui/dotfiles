@@ -24,11 +24,11 @@ local function transform_rust(content)
     return out
 end
 
-local function transform_rust_ranges(content)
+local function transform_rust_spans(content)
     local out = ""
-    for indexes in rs.String.new(content):line_ranges() do
-        local start = indexes[1]
-        local stop = indexes[2]
+    for span in rs.String.new(content):line_spans() do
+        local start = span[1]
+        local stop = span[2]
         local line = content:sub(start, stop)
         local line = rs.String.new(line)
         local line_no_leading_spaces = line:trim_start()
@@ -46,5 +46,5 @@ end
 
 -- return transform
 -- return transform_rust
--- return transform_rust_ranges
+-- return transform_rust_spans
 return identity
