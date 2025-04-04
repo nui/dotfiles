@@ -13,15 +13,16 @@ local function transform(content)
 end
 
 local function transform_rust(content)
-    local out = ""
+    local buf = rs.StringBuf.new()
     for line in rs.String.new(content):lines() do
         local line_no_leading_spaces = line:trim_start()
         local is_comment_line = line_no_leading_spaces:starts_with("#")
         if not is_comment_line then
-            out = out .. line.val .. "\n"
+            buf:push(line)
+            buf:put_newline()
         end
     end
-    return out
+    return buf.val
 end
 
 local function transform_rust_spans(content)
