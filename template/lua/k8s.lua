@@ -28,9 +28,7 @@ end
 local function transform_rust_spans(content)
     local out = ""
     for span in rs.String.new(content):line_spans() do
-        local start = span[1]
-        local stop = span[2]
-        local line = content:sub(start, stop)
+        local line = content:sub(span.start, span.end_)
         local line = rs.String.new(line)
         local line_no_leading_spaces = line:trim_start()
         local is_comment_line = line_no_leading_spaces:starts_with("#")
