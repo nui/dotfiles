@@ -13,7 +13,7 @@ local function transform(content)
 end
 
 local function transform_rust(content)
-    local buf = rs.StringBuf.new()
+    local buf = rs.StringBuf.with_capacity(#content)
     for line in rs.String.new(content):lines() do
         local line_no_leading_spaces = line:trim_start()
         local is_comment_line = line_no_leading_spaces:starts_with("#")
