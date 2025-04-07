@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+set -ex
+kubectl -n kube-system rollout restart deployment cilium-operator hubble-relay hubble-ui
+kubectl -n kube-system rollout restart daemonset cilium cilium-envoy
+
