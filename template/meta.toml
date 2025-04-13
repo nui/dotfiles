@@ -22,6 +22,7 @@ language = "nginx"
 name = "Apt proxy"
 file = "files/apt.conf"
 language = "sh"
+clipboard = true
 
 [[templates]]
 name = "k8s statefulset"
@@ -34,4 +35,4 @@ name = "k8s dashboard"
 file = "files/k8s-dashboard.sh"
 language = "sh"
 lua = { file = "lua/no-commented-line.lua" }
-
+clipboard = true
