@@ -33,5 +33,5 @@ lua = { file = "lua/k8s.lua" }
 name = "k8s dashboard"
 file = "files/k8s-dashboard.sh"
 language = "sh"
-lua = { file = "lua/no-comment.lua" }
+lua = { file = "lua/no-commented-line.lua" }
 
