@@ -28,3 +28,10 @@ name = "k8s statefulset"
 file = "files/k8s-statefulset.yml"
 language = "yaml"
 lua = { file = "lua/k8s.lua" }
+
+[[templates]]
+name = "k8s dashboard"
+file = "files/k8s-dashboard.sh"
+language = "sh"
+lua = { file = "lua/no-comment.lua" }
+
