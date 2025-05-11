@@ -1,7 +1,0 @@
-FROM alpine
-
-RUN apk add --update curl tmux zsh neovim
-
-RUN curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com \
-    && sh setup.sh -y \
-    && rm setup.sh

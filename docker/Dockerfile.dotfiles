@@ -1,0 +1,13 @@
+FROM alpine
+
+RUN apk add --update curl tmux zsh neovim
+
+RUN <<'EOS'
+set -ex
+curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
+sh setup.sh -y
+rm setup.sh
+for bin in nmk nmkup; do
+    ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
+done
+EOS
