@@ -14,8 +14,8 @@ set -ex
 staging_dir=$(mktemp -d)
 cd $staging_dir
 file=nmk-x86_64-unknown-linux-musl
-curl -sSL -o $file https://github.com/nuimk/nmk-releases/releases/download/v2025.03.03/$file
-if echo "eea2efb83f05bea0255c2a615eef22271cb51047772ea76ec69f511152a91831 *$file" | sha256sum -c -; then
+curl -sSL -o $file https://github.com/nuimk/nmk-releases/releases/download/v2025.5.1/$file
+if echo "20b5b49292332075ce789e145f99b31384e3d538612a9b562d871110d9561e39 *$file" | sha256sum -c -; then
     install $file /usr/local/bin/nmk
 fi
 rm -rf $staging_dir
