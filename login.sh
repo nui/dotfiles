@@ -31,7 +31,7 @@ try_start_login_shell() {
 
     flags="--login"
     if [ -n "$SSH_CONNECTION" ]; then
-        flags="$flags --ssh --motd"
+        flags="$flags --motd"
     fi
 
     # transfer execution to launcher
