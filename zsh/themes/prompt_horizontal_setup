@@ -164,10 +164,10 @@ prompt_horizontal_preprompt_render() {
 		integer show_virtualenv_name=0
 
 		# tmux named session
-		((${horizontal[show_tmux_named_session]})) && [[ -n $NMK_TMUX_NAMED_SESSION ]] && {
+		((${horizontal[show_tmux_named_session]})) && [[ -n $NMK_SHELL_NAMED_SESSION ]] && {
 			symbol=${horizontal_symbol[tmux]}
 			((! ${horizontal[iconic_font]})) && symbol="T:"
-			prompt_status+="$symbol${NMK_TMUX_NAMED_SESSION:0:12}"
+			prompt_status+="$symbol${NMK_SHELL_NAMED_SESSION:0:12}"
 		}
 
 		((${horizontal[show_git]})) && vcs_info
