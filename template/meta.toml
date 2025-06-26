@@ -3,10 +3,11 @@ name = "compose.yml"
 file = "files/compose.yml"
 language = "yaml"
 
+
 [[templates]]
-name = "Docker daemon.json"
-file = "files/daemon.json"
-language = "json"
+name = "docker quickfix"
+file = "files/docker.sh"
+language = "sh"
 
 [[templates]]
 name = "Dockerfile - ubuntu"
@@ -36,3 +37,9 @@ file = "files/k8s-dashboard.sh"
 language = "sh"
 lua = { file = "lua/no-commented-line.lua" }
 clipboard = true
+
+[[templates]]
+name = "Docker daemon.json"
+file = "files/daemon.json"
+language = "json"
+
