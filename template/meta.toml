@@ -43,3 +43,8 @@ name = "Docker daemon.json"
 file = "files/daemon.json"
 language = "json"
 
+[[templates]]
+name = "LVM"
+file = "files/lvm.sh"
+language = "sh"
+
