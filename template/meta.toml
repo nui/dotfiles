@@ -1,6 +1,7 @@
 [[templates]]
 name = "compose.yml"
 file = "files/compose.yml"
+output = "compose.yml"
 language = "yaml"
 
 
