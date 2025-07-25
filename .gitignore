@@ -30,3 +30,8 @@ node_modules/
 npm-debug.log
 target.*/
 target/
+
+# we intentionally ignore this directory.
+# our scripts should be in devbin
+/bin
+
