@@ -13,6 +13,9 @@ on:
         options:
           - ubuntu-24.04
 
+env:
+  C_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 jobs:
   build_and_upload:
     runs-on: ${{ inputs.runs-on || 'ubuntu-24.04' }}
@@ -66,5 +69,5 @@ jobs:
           path: dist
           parent: false
           gzip: true
-          destination: 'nmk.nuimk.com'
+          destination: 'nmk.nuimk.com/channels/${{ env.C_BRANCH_NAME }}'
           process_gcloudignore: false
