@@ -9,9 +9,6 @@ cd ${0:a:h}
 
 ZSH_COMPLETE_DIR=$ZDOTDIR/completion
 
-[[ $OSTYPE == darwin* ]]
-is_darwin=$(( $? == 0))
-
 (( ${+commands[nmk]} )) && nmk completions zsh -o $ZSH_COMPLETE_DIR/_nmk
 (( ${+commands[nbox]} )) && nbox completions zsh -o $ZSH_COMPLETE_DIR/_nbox
 
