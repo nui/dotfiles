@@ -327,7 +327,7 @@ fi
 
     if [[ $selected_prompt == horizontal ]]; then
         # Don't display git branch symbol if terminal does not support 256 colors
-        (( ${+commands[tput]} )) && (( $(command tput colors) < 256 )) && horizontal_branch_symbol=
+        [[ -n $TERM ]] && (( ${+commands[tput]} )) && (( $(command tput colors) < 256 )) && horizontal_branch_symbol=
 
         # Hide user and host in prompt if NMK_DEVELOPMENT is true by default,
         # this is not apply to zsh in ssh session
