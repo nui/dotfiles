@@ -44,7 +44,7 @@ try_start_login_shell() {
 
     if [ $vscode_server_login -eq 1 ]; then
         # start login shell manually
-        exec "$launcher" exec --init -l zsh
+        exec "$launcher" login-shell zsh
     fi
 
     flags="--login"
