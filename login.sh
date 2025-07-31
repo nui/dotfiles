@@ -12,7 +12,7 @@ if [ -n "$ZSH_VERSION" ]; then
     setopt sh_word_split
 fi
 
-try_start_login_shell() {
+try_start() {
     local flags
     local launcher
     launcher="$1"
@@ -38,17 +38,11 @@ try_start_login_shell() {
     exec "$launcher" $flags "$@"
 }
 
-if [ -d "$NMK_HOME" ]; then
-    try_start_login_shell "$NMK_HOME/bin/nmk" "$@"
-fi
-
-# well known locations
-try_start_login_shell ~/.nmk/bin/nmk "$@"
-try_start_login_shell ~/bin/nmk "$@"
+try_start "${NMK_HOME:-$HOME/.nmk}/bin/nmk" "$@"
 
 global_nmk=$(command -v nmk 2>/dev/null)
 if [ -x "$global_nmk" ]; then
-    try_start_login_shell "$global_nmk" "$@"
+    try_start "$global_nmk" "$@"
 fi
 
 # If this line is reached, we didn't find candidate launcher, fallback to re-execute itself.
