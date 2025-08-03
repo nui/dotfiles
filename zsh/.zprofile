@@ -20,6 +20,10 @@ if [[ $NMK_ZSH_PROFILE_INITIALIZED != "1" ]]; then
     if [[ -e $ZDOTDIR/zprofile ]]; then
         source $ZDOTDIR/zprofile
     fi
+    () {
+        local file
+        for file ($ZDOTDIR/zprofile.d/*.zsh(N)) source $file
+    }
     export NMK_ZSH_PROFILE_INITIALIZED=1
 fi
 # vi: ft=zsh
