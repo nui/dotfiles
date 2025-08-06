@@ -22,7 +22,9 @@ if [[ $NMK_ZSH_PROFILE_INITIALIZED != "1" ]]; then
     fi
     () {
         local file
-        for file ($ZDOTDIR/zprofile.d/*.zsh(N)) source $file
+        for file ($ZDOTDIR/zprofile.d/*.zsh(N)) {
+            [[ -e $file ]] && source $file
+        }
     }
     export NMK_ZSH_PROFILE_INITIALIZED=1
 fi
