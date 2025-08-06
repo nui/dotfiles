@@ -1,0 +1,11 @@
+# NOTE: Doesn't work, it error to stdout with following message
+# Command is only available in WSL or inside a Visual Studio Code terminal.
+() {
+    [[ $VSCODE_RESOLVING_ENVIRONMENT -eq 1 ]] && {
+        local shell_path
+        local code_path
+        [[ -e $code_path ]] && shell_path=$($code_path --locate-shell-integration-path zsh 2>/dev/null)
+        [[ -e $shell_path ]] && export NMK_VSCODE_SHELL_INTEGRATION_PATH="$shell_path"
+    }
+}
+
