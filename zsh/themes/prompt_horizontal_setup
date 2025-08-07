@@ -348,6 +348,7 @@ prompt_horizontal_setup() {
 	horizontal_default[base_color]=cyan
 
 	# Enable/Disable horizontal features
+	local i
 	for i in base_color; do
 		: ${horizontal[$i]:=$horizontal_default[$i]}
 	done
