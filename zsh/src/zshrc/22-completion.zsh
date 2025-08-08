@@ -30,6 +30,7 @@ zstyle ':completion:*:(ssh|scp|sftp):*' hosts off
     )
     # Try to add completion directories to fpath
     # if $fp not in $fpath and $fp does exists
+    local fp
     for fp in $completion_dir; do
         if [[ ${fpath[(ie)$fp]} -gt ${#fpath} && -d $fp ]]; then
             fpath+=$fp
