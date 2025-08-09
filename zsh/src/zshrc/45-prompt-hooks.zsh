@@ -39,7 +39,7 @@ _nmk-update-ssh-socket-tmux() {
         update_env_command=${tmux_outputs[2]}
         [[ -n $socket_line ]] && {
             socket_path=${socket_line#SSH_AUTH_SOCK=}
-            # unchanged, do nothing
+            # unchanged
             [[ $socket_path == $SSH_AUTH_SOCK ]] && return 0
             # not a valid socket (broken)
             [[ ! -S $socket_path ]] && return 0
@@ -56,11 +56,10 @@ typeset -g _nmk_update_ssh_socket_vscode_last_modified=0
 _nmk-update-ssh-socket-vscode() {
     local socket
     local -a sockets
-    local cur_socket
     # Debouncing
     (( $EPOCHSECONDS - $_nmk_update_ssh_socket_vscode_last_modified <= 5 )) && return 0
+    # if socket is set but closed/invalid
     [[ -n $SSH_AUTH_SOCK && ! -S $SSH_AUTH_SOCK ]] && {
-        cur_socket=$SSH_AUTH_SOCK
         # see https://zsh.sourceforge.io/Doc/Release/Expansion.html#Glob-Qualifiers
         # O = files owned by the effective user ID
         # om = sort by last modification, youngest first
@@ -82,15 +81,17 @@ _nmk-update-ssh-socket-vscode() {
     _nmk_preexec_functions+=_nmk-kubectl-preexec
 }
 
-# register a hook running on every prompt line
+# register hooks to update SSH_AUTH_SOCK variable on a remote session (ssh & devcontainers)
 [[ -n $SSH_AUTH_SOCK ]] && {
-    # tmux session on remote server
+    # 1. zsh running within a tmux session on remote server
     if [[ -n $TMUX && -n $SSH_CONNECTION ]]; then
         _nmk_precmd_functions+=_nmk-update-ssh-socket-tmux
+    # 2. zsh running within vscode terminal
     elif [[ $TERM_PROGRAM == vscode ]]; then
-        if [[ $SSH_AUTH_SOCK == /tmp/vscode-ssh-auth-* ]]; then
-            # vscode on remote server or devcontainer
-            if [[ $REMOTE_CONTAINERS == true ]] || [[ -n $SSH_CONNECTION ]]; then
+        # devcontainers or remote vscode via an ssh connection
+        if [[ $REMOTE_CONTAINERS == true ]] || [[ -n $SSH_CONNECTION ]]; then
+            # if SSH_AUTH_SOCK format is matched
+            if [[ $SSH_AUTH_SOCK == /tmp/vscode-ssh-auth-* ]]; then
                 _nmk_precmd_functions+=_nmk-update-ssh-socket-vscode
             fi
         fi
