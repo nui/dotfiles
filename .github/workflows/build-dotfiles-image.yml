@@ -1,8 +1,6 @@
 name: Build and publish dotfiles image
 
 on:
-  push:
-    branches: ['main']
   schedule:
     # Daily at midnight
     - cron:  '0 0 * * *'
