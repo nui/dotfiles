@@ -13,7 +13,7 @@ _nmk-kubectl-preexec() {
     fi
 }
 
-typeset -g _nmk_update_ssh_socket_tmux_last_check=0
+typeset -g _nmk_update_ssh_socket_tmux_last_tmux_call=0
 _nmk-update-ssh-socket-tmux() {
     local env_lines
     local socket_line
@@ -21,38 +21,42 @@ _nmk-update-ssh-socket-tmux() {
     local tmux_output
     local tmux_outputs
     local update_env_command
-    (( $EPOCHSECONDS - $_nmk_update_ssh_socket_tmux_last_check > 5 )) \
-        && [[ -n $SSH_AUTH_SOCK && ! -S $SSH_AUTH_SOCK ]] && {
-        _nmk_update_ssh_socket_tmux_last_check=$EPOCHSECONDS
+    # Debouncing
+    (( $EPOCHSECONDS - $_nmk_update_ssh_socket_tmux_last_tmux_call <= 5 )) && return 0
+    [[ -n $SSH_AUTH_SOCK && ! -S $SSH_AUTH_SOCK ]] && {
+        _nmk_update_ssh_socket_tmux_last_tmux_call=$EPOCHSECONDS
         tmux_output="$(tmux show-environment \; display-message -p -- ----marker---- \; show-environment -s 2>/dev/null)"
+        # return if failed
         if (( $? )); then
             return $?
         fi
         tmux_outputs=("${(@s:----marker----:)tmux_output}")
         env_lines=(${(f)"${tmux_outputs[1]}"})
         socket_line="${env_lines[(r)SSH_AUTH_SOCK=*]}"
+        update_env_command=${tmux_outputs[2]}
         [[ -n $socket_line ]] && {
             socket_path=${socket_line#SSH_AUTH_SOCK=}
-            if [[ $socket_path == $SSH_AUTH_SOCK ]]; then
-                # unchanged, do nothing
-                return 0
-            fi
-            [[ -S $socket_path ]] && {
-                update_env_command=${tmux_outputs[2]}
-                eval "$update_env_command"
-                echo >&2 "prompt-hook ($0): environment updated from tmux session"
-            }
+            # unchanged, do nothing
+            [[ $socket_path == $SSH_AUTH_SOCK ]] && return 0
+            # not a valid socket (broken)
+            [[ ! -S $socket_path ]] && return 0
         }
+        # update if
+        #   - not found socket line
+        #   - found a valid socket path
+        eval "$update_env_command"
+        echo >&2 "prompt-hook ($0): environment updated from tmux session"
     }
 }
 
-typeset -g _nmk_update_ssh_socket_vscode_last_check=0
+typeset -g _nmk_update_ssh_socket_vscode_last_modified=0
 _nmk-update-ssh-socket-vscode() {
     local socket
     local -a sockets
     local cur_socket
-    (( $EPOCHSECONDS - $_nmk_update_ssh_socket_vscode_last_check > 5 )) \
-        && [[ -n $SSH_AUTH_SOCK && ! -S $SSH_AUTH_SOCK ]] && {
+    # Debouncing
+    (( $EPOCHSECONDS - $_nmk_update_ssh_socket_vscode_last_modified <= 5 )) && return 0
+    [[ -n $SSH_AUTH_SOCK && ! -S $SSH_AUTH_SOCK ]] && {
         cur_socket=$SSH_AUTH_SOCK
         # see https://zsh.sourceforge.io/Doc/Release/Expansion.html#Glob-Qualifiers
         # O = files owned by the effective user ID
@@ -62,11 +66,11 @@ _nmk-update-ssh-socket-vscode() {
         for socket in ${sockets[@]:0:3}; do
             if [[ -S $socket ]]; then
                 export SSH_AUTH_SOCK=$socket
-                echo >&2 "$0: SSH_AUTH_SOCK changed from $cur_socket to $socket"
+                echo >&2 "$0: update SSH_AUTH_SOCK to $socket"
                 break
             fi
         done
-        _nmk_update_ssh_socket_vscode_last_check=$EPOCHSECONDS
+        _nmk_update_ssh_socket_vscode_last_modified=$EPOCHSECONDS
     }
 }
 
