@@ -23,6 +23,9 @@ _nmk-update-ssh-socket-tmux() {
     local update_env_command
     # Debouncing
     (( $EPOCHSECONDS - $_nmk_update_ssh_socket_tmux_last_tmux_call <= 5 )) && return 0
+    # NOTE: the following block may unset SSH_AUTH_SOCK
+    # which will make the following condition always false in subsequent call
+    # we don't handle above situation
     [[ -n $SSH_AUTH_SOCK && ! -S $SSH_AUTH_SOCK ]] && {
         _nmk_update_ssh_socket_tmux_last_tmux_call=$EPOCHSECONDS
         tmux_output="$(tmux show-environment \; display-message -p -- ----marker---- \; show-environment -s 2>/dev/null)"

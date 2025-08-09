@@ -15,7 +15,8 @@
         }
 
         # Change prompt color on remote session
-        if [[ -n $SSH_TTY || $SUDO_USER == ssm-user ]]; then
+        # NOTE: we can't use SSH_TTY because vscode-terminal on remote server doesn't set it
+        if [[ -n $SSH_CONNECTION || $SUDO_USER == ssm-user ]]; then
             if [[ $horizontal[base_color] == $horizontal_default[base_color] ]]; then
                 horizontal[base_color]=magenta
             fi
