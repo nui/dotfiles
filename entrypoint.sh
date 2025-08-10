@@ -9,11 +9,13 @@ if [ -n "$ZSH_VERSION" ]; then
     setopt sh_word_split
 fi
 
-try_start() {
+try_exec() {
+    local command
     local exec_override_shell
     local flags
     local launcher
     launcher="$1"
+    command="$SSH_ORIGINAL_COMMAND"
 
     # return if file doesn't exist or broken symlink
     if [ ! -e "$launcher" ]; then
@@ -27,20 +29,21 @@ try_start() {
     fi
 
     exec_override_shell=0
-    if [ -n "$SSH_ORIGINAL_COMMAND" -a "$SHLVL" = 0 ]; then
-        case "$SSH_ORIGINAL_COMMAND" in
-            *sh )
+    if [ -n "$command" -a "$SHLVL" = 0 ]; then
+        case "$command" in
+            # well-known shell
+            sh | bash | zsh )
                 # change SHELL to our shell
                 exec_override_shell=1
                 ;;
             * )
-                eval "$SSH_ORIGINAL_COMMAND"
+                eval "$command"
                 exit $?
         esac
     fi
 
     if [ $exec_override_shell -eq 1 ]; then
-        exec "$launcher" exec --set-shell "$SSH_ORIGINAL_COMMAND"
+        exec "$launcher" exec --set-shell "$command"
     else
         if [ -n "$SSH_CONNECTION" ]; then
             flags="$flags --motd"
@@ -49,11 +52,11 @@ try_start() {
     fi
 }
 
-try_start "${NMK_HOME:-$HOME/.nmk}/bin/nmk"
+try_exec "${NMK_HOME:-$HOME/.nmk}/bin/nmk"
 
 global_nmk=$(command -v nmk 2>/dev/null)
 if [ -x "$global_nmk" ]; then
-    try_start "$global_nmk"
+    try_exec "$global_nmk"
 fi
 
 
