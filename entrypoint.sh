@@ -29,11 +29,12 @@ try_exec() {
     fi
 
     exec_override_shell=0
-    if [ -n "$command" -a "$SHLVL" = 0 ]; then
+    # SHLVL=0 = running from ssh command
+    if [ -n "$command" -a "${SHLVL:-0}" = 0 ]; then
         case "$command" in
             # well-known shell
             sh | bash | zsh )
-                # change SHELL to our shell
+                # set SHELL variable to our preferred shell
                 exec_override_shell=1
                 ;;
             * )
