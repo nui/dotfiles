@@ -11,7 +11,6 @@ fi
 
 try_exec() {
     local command
-    local exec_override_shell
     local flags
     local launcher
     launcher="$1"
@@ -28,27 +27,13 @@ try_exec() {
         return 0
     fi
 
-    exec_override_shell=0
     if [ -n "$command" ]; then
-        case "$command" in
-            # well-known shell
-            sh | bash | zsh )
-                # set SHELL variable to our preferred shell
-                exec_override_shell=1
-                ;;
-            * )
-                eval "$command"
-                exit $?
-        esac
-    fi
-
-    if [ $exec_override_shell -eq 1 ]; then
-        exec "$launcher" exec --set-shell "$command"
+        exec "$launcher" exec --set-shell --eval-cmd "$command"
     else
         if [ -n "$SSH_CONNECTION" ]; then
             flags="$flags --motd"
         fi
-        exec "$launcher" $flags exec -l zsh
+        exec "$launcher" $flags --login
     fi
 }
 
