@@ -105,7 +105,9 @@ autoload -Uz use-gpg-ssh-agent
 [[ "$UID" != 0 ]] && alias nmr='sudo -H -i /root/.nmk/bin/nmk'
 
 # apply tmux session environment to running shell
-alias ssenv=' eval $(tmux show-environment -s)'
+if [[ -n $TMUX ]]; then
+    alias ssenv=' tmux show-environment && eval $(tmux show-environment -s)'
+fi
 
 # reset nvidia gpu
 [[ $OSTYPE == linux* ]] && alias gpu-reload="sudo rmmod nvidia_uvm ; sudo modprobe nvidia_uvm"
