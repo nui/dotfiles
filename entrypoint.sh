@@ -85,7 +85,7 @@ execute_specified_command() {
             escaped_launcher_path=$(escape "$LAUNCHER_PATH")
             exec "$SHELL_PROG" -c "$escaped_launcher_path ${SSH_ORIGINAL_COMMAND#nmk[[:space:]]}"
             ;;
-        # excute SSH_ORIGINAL_COMMAND
+        # execute SSH_ORIGINAL_COMMAND
         * )
             exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
             ;;

@@ -16,24 +16,24 @@ if [ -n "$ZSH_VERSION" ]; then
     emulate sh
 fi
 
-LAUNCHER=""
+LAUNCHER_PATH=""
 
 locate_launcher() {
     launcher="$1"
     # return if file doesn't exist or broken symlink
     if [ ! -e "$launcher" ]; then
-        return 0
+        return 1
     fi
     # return if file is not executable (for some reason)
     if [ ! -x "$launcher" ]; then
         >&2 echo "$launcher" is not executable
-        return 0
+        return 1
     fi
-    LAUNCHER="$launcher"
+    LAUNCHER_PATH="$launcher"
+    unset launcher
 }
 
-no_launcher_handler() {
-    # fallback to shell
+fallback_no_launcher() {
     [ -n "$BASH_VERSION" ] && exec bash -l
     [ -n "$ZSH_VERSION" ]  && exec zsh -l
 
@@ -41,16 +41,16 @@ no_launcher_handler() {
 }
 
 main() {
-    locate_launcher "${NMK_HOME:-$HOME/.nmk}/bin/nmk"
-    [ -z "$LAUNCHER" ] && locate_launcher "$(command -v nmk 2>/dev/null)"
-    # If we didn't find a launcher
-    [ -z "$LAUNCHER" ] && no_launcher_handler
+    locate_launcher "$NMK_LAUNCHER_PATH" \
+        || locate_launcher "${NMK_HOME:-$HOME/.nmk}/bin/nmk" \
+        || locate_launcher "$(command -v nmk 2>/dev/null)" \
+        || fallback_no_launcher
 
     flags="--login"
-    if [ -n "$SSH_CONNECTION" ]; then
+    if [ -n "$SSH_CONNECTION" ] && [ "$SHLVL" = 0 ]; then
         flags="$flags --motd"
     fi
-    exec "$LAUNCHER" $flags "$@"
+    exec "$LAUNCHER_PATH" $flags "$@"
 }
 
 main "$@"
