@@ -47,9 +47,11 @@ main() {
         || fallback_no_launcher
 
     flags="--login"
-    if [ -n "$SSH_CONNECTION" ] && [ "$SHLVL" = 0 ]; then
+    # shellcheck disable=SC3028
+    if [ -n "$SSH_CONNECTION" ] && [ "${SHLVL:-0}" = 0 ]; then
         flags="$flags --motd"
     fi
+    # shellcheck disable=SC2086
     exec "$LAUNCHER_PATH" $flags "$@"
 }
 
