@@ -1,12 +1,7 @@
-# shellcheck disable=SC2148
+# shellcheck shell=sh
 
-# An entrypoint for ssh authorized_keys command option
-#
-# Intended usage
-#   - as a command in authorized_keys "command" option
-#
 # Note
-#   - This script should be sourced
+#   - This script must be sourced from "command" option in authorized_keys file
 #   - All positional arguments are ignored
 #   - we can't use "exec -l" because busybox exec doesn't support it
 
@@ -64,30 +59,35 @@ unexport_ssh_original_command() {
 # See https://www.shellcheck.net/wiki/SC3050
 escape() { printf "'%s'\\n" "$(printf '%s' "$1" | sed -e "s/'/'\\\\''/g")"; }
 
+prepend_nmk_bin_to_path() {
+    nmk_bin_dir=$(dirname "$LAUNCHER_PATH")
+    PATH="$nmk_bin_dir:$PATH"
+}
 
 execute_specified_command() {
     # handle SSH_ORIGINAL_COMMAND base on following conditions
-    #   - If it is a shell, update SHELL environment variable to zsh (if available).
-    #     Tools that detect login shell from that variable will work properly
-    #   - if "nmk" (the launcher), call it using absolute path
-    #   - otherwise, evalute specified command
+    #   1. If it is a shell, update SHELL environment variable to zsh (if available).
+    #      Tools that detect login shell from that variable will work properly
+    #   2. if nmk/nmkup/nbox, update PATH then execute
+    #   3. otherwise, evalute specified command
     case "$SSH_ORIGINAL_COMMAND" in
-        # a shell without arguments
+        # -- case 1 --
         sh | bash | zsh )
             exec "$LAUNCHER_PATH" exec --set-shell "$SSH_ORIGINAL_COMMAND"
             ;;
-        # a shell with arguments
         sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
             exec "$LAUNCHER_PATH" exec --set-shell --eval-cmd "$SSH_ORIGINAL_COMMAND"
             ;;
-        nmk )
-            exec "$LAUNCHER_PATH"
+        # -- case 2 --
+        nmk | nmkup | nbox )
+            prepend_nmk_bin_to_path
+            exec "$SSH_ORIGINAL_COMMAND"
             ;;
-        nmk[[:space:]]* )
-            escaped_launcher_path=$(escape "$LAUNCHER_PATH")
-            exec "$SHELL_PROG" -c "$escaped_launcher_path ${SSH_ORIGINAL_COMMAND#nmk[[:space:]]}"
+        nmk[[:space:]]* | nmkup[[:space:]]* | nbox[[:space:]]* )
+            prepend_nmk_bin_to_path
+            exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
             ;;
-        # execute SSH_ORIGINAL_COMMAND
+        # -- case 3 --
         * )
             exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
             ;;
