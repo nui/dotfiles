@@ -1,15 +1,36 @@
 # shellcheck shell=sh
 
-# Note
-#   - This script must be sourced from "command" option in authorized_keys file
-#   - All positional arguments are ignored
-#   - we can't use "exec -l" because busybox exec doesn't support it
+# - This script must be sourced from "command" option in authorized_keys file
+# - All positional arguments are ignored
+# - "exec -l" is not supported by dash shell
 
+
+
+# -- begin prerequisites and fail-safe method -----------------------------------------------------
 if [ -n "$ZSH_VERSION" ]; then
     # make zsh compatible with posix shell
     emulate sh
 fi
 
+if [ -n "${SSH_ORIGINAL_COMMAND+set}" ]; then
+    # unexport SSH_ORIGINAL_COMMAND
+    cmd="$SSH_ORIGINAL_COMMAND"
+    unset SSH_ORIGINAL_COMMAND
+    SSH_ORIGINAL_COMMAND="$cmd"
+    unset cmd
+
+    # Immediately execute command if starts with '\'
+    # It is a fail-safe method if there is something wrong with actual script body or the launcher
+    if [ "${SSH_ORIGINAL_COMMAND#\\}" != "$SSH_ORIGINAL_COMMAND" ]; then
+        eval "$SSH_ORIGINAL_COMMAND"
+        exit $?
+    fi
+fi
+# -- end prerequisites and fail-safe method -------------------------------------------------------
+
+
+
+# -- actual script body ---------------------------------------------------------------------------
 LAUNCHER_PATH=""
 SHELL_PROG=""
 
@@ -43,25 +64,17 @@ fallback_no_launcher() {
         exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
     fi
 
+    # otherwise, fallback to start a login shell
     exec "$SHELL_PROG" -l
-}
-
-unexport_ssh_original_command() {
-    # This script should not expose SSH_ORIGINAL_COMMAND to children
-    if [ -n "$SSH_ORIGINAL_COMMAND" ]; then
-        _cmd="$SSH_ORIGINAL_COMMAND"
-        unset SSH_ORIGINAL_COMMAND
-        SSH_ORIGINAL_COMMAND="$_cmd"
-        unset _cmd
-    fi
 }
 
 # See https://www.shellcheck.net/wiki/SC3050
 escape() { printf "'%s'\\n" "$(printf '%s' "$1" | sed -e "s/'/'\\\\''/g")"; }
 
-prepend_nmk_bin_to_path() {
-    nmk_bin_dir=$(dirname "$LAUNCHER_PATH")
-    PATH="$nmk_bin_dir:$PATH"
+prepend_bin_dir_to_path() {
+    bin_dir=$(dirname "$LAUNCHER_PATH")
+    PATH="$bin_dir:$PATH"
+    unset bin_dir
 }
 
 execute_specified_command() {
@@ -80,11 +93,11 @@ execute_specified_command() {
             ;;
         # -- case 2 --
         nmk | nmkup | nbox )
-            prepend_nmk_bin_to_path
+            prepend_bin_dir_to_path
             exec "$SSH_ORIGINAL_COMMAND"
             ;;
         nmk[[:space:]]* | nmkup[[:space:]]* | nbox[[:space:]]* )
-            prepend_nmk_bin_to_path
+            prepend_bin_dir_to_path
             exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
             ;;
         # -- case 3 --
@@ -95,8 +108,6 @@ execute_specified_command() {
 }
 
 main() {
-    unexport_ssh_original_command
-
     locate_launcher "$NMK_LAUNCHER_PATH" \
         || locate_launcher "${NMK_HOME:-$HOME/.nmk}/bin/nmk" \
         || locate_launcher "$(command -v nmk 2>/dev/null)" \
@@ -108,7 +119,7 @@ main() {
     exec "$LAUNCHER_PATH" --motd --login
 }
 
-# NOTE: we don't specify "$@" because this entrypoint should not be called with arguments
+# NOTE: we don't pass "$@" because this entrypoint should not be called with arguments
 main
 
 # vi: ft=sh
