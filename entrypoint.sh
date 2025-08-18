@@ -103,10 +103,10 @@ execute_command() {
         #   * it will initialize required environment variables
         #   * --set-shell will set SHELL to our preferred login shell (zsh if available)
         sh | bash | zsh )
-            exec "$LAUNCHER_PATH" exec --set-shell "$_cmd"
+            exec "$LAUNCHER_PATH" init-exec --set-shell "$_cmd"
             ;;
         sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
-            exec "$LAUNCHER_PATH" exec --set-shell --eval-cmd "$_cmd"
+            exec "$LAUNCHER_PATH" init-exec --set-shell --eval-cmd "$_cmd"
             ;;
 
         # Otherwise, simply execute the command
