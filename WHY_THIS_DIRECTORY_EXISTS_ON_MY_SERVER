@@ -1,0 +1,4 @@
+If you are reading this file, feel free to remove whole directory that contains this file (usually ~/.nmk).
+
+This directory is created from https://github.com/nui/dotfiles. It contains my dotfiles and some binaries.
+Production code doesn't need it. They are here for development and debugging purpose.

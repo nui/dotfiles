@@ -1,5 +1,5 @@
 # Dotfiles
-This repository contains my dot files and some scripts that I use everyday.
+This repository contains my dotfiles and some scripts that I use everyday.
 
 ## System dependencies
 ```sh

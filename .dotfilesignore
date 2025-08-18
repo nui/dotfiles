@@ -23,6 +23,7 @@ zsh/plugins/zsh-syntax-highlighting/images
 zsh/plugins/zsh-syntax-highlighting/tests
 zsh/watchexec-merge-zshrc.sh
 # our directories
+.github
 docker
 etc/macos
 etc/ssh
