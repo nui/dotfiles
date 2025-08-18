@@ -1,6 +1,10 @@
-# shellcheck shell=sh
+# shellcheck shell=dash
 
-# - This script must be sourced from "command" option in authorized_keys file
+# This is a script that does launcher detection, inspects SSH_ORIGINAL_COMMAND then performs
+# any required initialization, if command is not specified, it will launch zsh shell if available.
+#
+# Note:
+# - This script must be sourced by "command" option inside authorized_keys file
 # - All positional arguments are ignored
 # - "exec -l" is not supported by dash shell
 
@@ -12,20 +16,25 @@ if [ -n "$ZSH_VERSION" ]; then
     emulate sh
 fi
 
-if [ -n "${SSH_ORIGINAL_COMMAND+set}" ]; then
-    # unexport SSH_ORIGINAL_COMMAND
-    cmd="$SSH_ORIGINAL_COMMAND"
-    unset SSH_ORIGINAL_COMMAND
-    SSH_ORIGINAL_COMMAND="$cmd"
-    unset cmd
+pre_start() {
+    if [ -n "${SSH_ORIGINAL_COMMAND+set}" ]; then
+        _cmd="$SSH_ORIGINAL_COMMAND"
 
-    # Immediately execute command if starts with '\'
-    # It is a fail-safe method if there is something wrong with actual script body or the launcher
-    if [ "${SSH_ORIGINAL_COMMAND#\\}" != "$SSH_ORIGINAL_COMMAND" ]; then
-        eval "$SSH_ORIGINAL_COMMAND"
-        exit $?
+        # downgrade SSH_ORIGINAL_COMMAND to a normal variable
+        unset SSH_ORIGINAL_COMMAND
+        SSH_ORIGINAL_COMMAND="$_cmd"
+
+        # Immediately execute command if starts with '\'
+        # It is a fail-safe mechanism in case if there is something wrong with actual script body
+        # or self updating corruption
+        if [ "${_cmd#\\}" != "$_cmd" ]; then
+            eval "$_cmd"
+            exit $?
+        fi
+        unset _cmd
     fi
-fi
+}
+pre_start
 # -- end prerequisites and fail-safe method -------------------------------------------------------
 
 
@@ -44,18 +53,18 @@ else
 fi
 
 locate_launcher() {
-    launcher="$1"
-    # return if file doesn't exist or broken symlink
-    if [ ! -e "$launcher" ]; then
+    _launcher="$1"
+    # fail if file doesn't exist or file is a broken symlink
+    if [ ! -e "$_launcher" ]; then
         return 1
     fi
-    # return if file is not executable (for some reason)
-    if [ ! -x "$launcher" ]; then
-        >&2 echo "$launcher" is not executable
+    # fail if file is not executable (for some reason)
+    if [ ! -x "$_launcher" ]; then
+        >&2 echo "$_launcher" is not executable
         return 1
     fi
-    LAUNCHER_PATH="$launcher"
-    unset launcher
+    LAUNCHER_PATH="$_launcher"
+    unset _launcher
 }
 
 fallback_no_launcher() {
@@ -72,37 +81,37 @@ fallback_no_launcher() {
 escape() { printf "'%s'\\n" "$(printf '%s' "$1" | sed -e "s/'/'\\\\''/g")"; }
 
 prepend_bin_dir_to_path() {
-    bin_dir=$(dirname "$LAUNCHER_PATH")
-    PATH="$bin_dir:$PATH"
-    unset bin_dir
+    _bin_dir=$(dirname "$LAUNCHER_PATH")
+    PATH="$_bin_dir:$PATH"
+    unset _bin_dir
 }
 
-execute_specified_command() {
-    # handle SSH_ORIGINAL_COMMAND base on following conditions
-    #   1. If it is a shell, update SHELL environment variable to zsh (if available).
-    #      Tools that detect login shell from that variable will work properly
-    #   2. if nmk/nmkup/nbox, update PATH then execute
-    #   3. otherwise, evalute specified command
-    case "$SSH_ORIGINAL_COMMAND" in
-        # -- case 1 --
-        sh | bash | zsh )
-            exec "$LAUNCHER_PATH" exec --set-shell "$SSH_ORIGINAL_COMMAND"
-            ;;
-        sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
-            exec "$LAUNCHER_PATH" exec --set-shell --eval-cmd "$SSH_ORIGINAL_COMMAND"
-            ;;
-        # -- case 2 --
+execute_command() {
+    _cmd="$SSH_ORIGINAL_COMMAND"
+    case "$_cmd" in
+        # If command is our binary, prepend its parent directory to PATH right before execution
         nmk | nmkup | nbox )
             prepend_bin_dir_to_path
-            exec "$SSH_ORIGINAL_COMMAND"
+            exec "$_cmd"
             ;;
         nmk[[:space:]]* | nmkup[[:space:]]* | nbox[[:space:]]* )
             prepend_bin_dir_to_path
-            exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
+            exec "$SHELL_PROG" -c "$_cmd"
             ;;
-        # -- case 3 --
+
+        # If command is a shell, call it with "exec" subcommand
+        #   * it will initialize required environment variables
+        #   * --set-shell will set SHELL to our preferred login shell (zsh if available)
+        sh | bash | zsh )
+            exec "$LAUNCHER_PATH" exec --set-shell "$_cmd"
+            ;;
+        sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
+            exec "$LAUNCHER_PATH" exec --set-shell --eval-cmd "$_cmd"
+            ;;
+
+        # Otherwise, simply execute the command
         * )
-            exec "$SHELL_PROG" -c "$SSH_ORIGINAL_COMMAND"
+            exec "$SHELL_PROG" -c "$_cmd"
             ;;
     esac
 }
@@ -113,7 +122,7 @@ main() {
         || locate_launcher "$(command -v nmk 2>/dev/null)" \
         || fallback_no_launcher
 
-    [ -n "$SSH_ORIGINAL_COMMAND" ] && execute_specified_command
+    [ -n "$SSH_ORIGINAL_COMMAND" ] && execute_command
 
     # Default to start a login shell
     exec "$LAUNCHER_PATH" --motd --login
