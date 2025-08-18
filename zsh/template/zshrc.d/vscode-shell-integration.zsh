@@ -11,7 +11,8 @@
     else
         cache_file=$cache_dir/vscode-shell-integration-path.host.zsh
     fi
-    if [[ -e $cache_file ]]; then
+    # cache file exist and has been modified within a day
+    if [[ -e $cache_file ]] && [[ -n $(find $cache_file -maxdepth 0 -type l -mtime -1) ]]; then
         source $cache_file
     else
         shell_path=$(code --locate-shell-integration-path zsh 2>/dev/null)
