@@ -367,6 +367,8 @@ _nmk-kubectl-preexec() {
 
 typeset -g _nmk_update_ssh_socket_tmux_last_tmux_call=0
 _nmk-update-ssh-socket-tmux() {
+    setopt localoptions noshwordsplit
+
     local env_lines
     local socket_line
     local socket_path
@@ -406,6 +408,8 @@ _nmk-update-ssh-socket-tmux() {
 
 typeset -g _nmk_update_ssh_socket_vscode_last_modified=0
 _nmk-update-ssh-socket-vscode() {
+    setopt localoptions noshwordsplit
+
     local socket
     local -a sockets
     # Debouncing

@@ -1,5 +1,7 @@
 () {
-    [[ "$TERM_PROGRAM" == vscode ]] || return 0
+    setopt localoptions noshwordsplit
+
+    [[ $TERM_PROGRAM == vscode ]] || return 0
     local cache_dir
     local cache_file
     local shell_path
