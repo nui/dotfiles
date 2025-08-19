@@ -4,7 +4,10 @@
 # any required initialization, if command is not specified, it will launch zsh shell if available.
 #
 # Note:
-# - This script must be sourced by "command" option inside authorized_keys file
+# - This script is used by "command" option inside authorized_keys file
+#    * sourcing is prefered ('. script.sh' format)
+#    * or using it as script path ('sh script.sh' format)
+#    * calling with ./script.sh format is not supported
 # - All positional arguments are ignored
 # - "exec -l" is not supported by dash shell
 
@@ -14,6 +17,16 @@
 if [ -n "$ZSH_VERSION" ]; then
     # make zsh compatible with posix shell
     emulate sh
+fi
+
+# Determine shell program that run script
+SHELL_PROG=""
+if [ -n "$BASH_VERSION" ]; then
+    SHELL_PROG=bash
+elif [ -n "$ZSH_VERSION" ]; then
+    SHELL_PROG=zsh
+else
+    SHELL_PROG="$0"
 fi
 
 pre_start() {
@@ -28,8 +41,7 @@ pre_start() {
         # It is a fail-safe mechanism in case if there is something wrong with actual script body
         # or self updating corruption
         if [ "${_cmd#\\}" != "$_cmd" ]; then
-            eval "$_cmd"
-            exit $?
+            exec "$SHELL_PROG" -c "$_cmd"
         fi
         unset _cmd
     fi
@@ -41,16 +53,6 @@ pre_start
 
 # -- actual script body ---------------------------------------------------------------------------
 LAUNCHER_PATH=""
-SHELL_PROG=""
-
-# Determine shell program that source this script
-if [ -n "$BASH_VERSION" ]; then
-    SHELL_PROG=bash
-elif [ -n "$ZSH_VERSION" ]; then
-    SHELL_PROG=zsh
-else
-    SHELL_PROG="$0"
-fi
 
 locate_launcher() {
     _launcher="$1"
