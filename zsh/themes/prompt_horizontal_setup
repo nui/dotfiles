@@ -189,8 +189,16 @@ prompt_horizontal_preprompt_render() {
 			[[ -n $git_info ]] && prompt_status+=$git_info
 		}
 
+		# pyenv version
+		((${horizontal[show_pyenv_version]})) && [[ -n $PYENV_VERSION ]] && {
+			symbol=${horizontal_symbol[pyenv]}
+			((! ${horizontal[iconic_font]})) && symbol="PE:"
+			prompt_status+="$symbol${${PYENV_VERSION}:0:12}"
+		}
+
 		# python virtual environment
-		((${horizontal[show_virtualenv]})) && [[ -n $VIRTUAL_ENV ]] && {
+		((${horizontal[show_virtualenv]})) && [[ -n $VIRTUAL_ENV ]] \
+				&& [[ $PYENV_VERSION != ${VIRTUAL_ENV:t} ]] && {
 			show_virtualenv_name=1
 			symbol=${horizontal_symbol[python]}
 			((! ${horizontal[iconic_font]})) && symbol="P:"
@@ -377,6 +385,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[show_exec_or_idle_duration]:=1}
 	: ${horizontal[show_git]:=1}
 	: ${horizontal[show_git_dirty_status]:=1}
+	: ${horizontal[show_pyenv_version]:=1}
 	: ${horizontal[show_timestamp]:=1}
 	: ${horizontal[show_tmux_named_session]:=1}
 	: ${horizontal[show_user_and_host]:=1}
@@ -393,6 +402,7 @@ prompt_horizontal_setup() {
 	# horizontal_status_separator="%F{${horizontal[base_color]}} | %f"
 	: ${horizontal_symbol[conda]:= }
 	: ${horizontal_symbol[git_branch]:=}
+	: ${horizontal_symbol[pyenv]:= }
 	: ${horizontal_symbol[python]:=󰌠 }
 	: ${horizontal_symbol[tmux]:= }
 	: ${horizontal_threshold[show_exec_duration]:=5}
