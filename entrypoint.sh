@@ -90,6 +90,10 @@ prepend_bin_dir_to_path() {
 
 execute_command() {
     _cmd="$SSH_ORIGINAL_COMMAND"
+    _shell_opts=""
+    if [ "$SHELL_PROG" = zsh ]; then
+        _shell_opts="-o shwordsplit"
+    fi
     case "$_cmd" in
         # If command is our binary, prepend its parent directory to PATH right before execution
         nmk | nmkup | nbox )
@@ -98,22 +102,24 @@ execute_command() {
             ;;
         nmk[[:space:]]* | nmkup[[:space:]]* | nbox[[:space:]]* )
             prepend_bin_dir_to_path
-            exec "$SHELL_PROG" -c "$_cmd"
+            # shellcheck disable=SC2086
+            exec "$SHELL_PROG" $_shell_opts -c "$_cmd"
             ;;
 
-        # If command is a shell, call it with "exec" subcommand
+        # If command is a shell, call it with "iexec" subcommand
         #   * it will initialize required environment variables
         #   * --set-shell will set SHELL to our preferred login shell (zsh if available)
         sh | bash | zsh )
-            exec "$LAUNCHER_PATH" init-exec --set-shell "$_cmd"
+            exec "$LAUNCHER_PATH" iexec --set-shell "$_cmd"
             ;;
         sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
-            exec "$LAUNCHER_PATH" init-exec --set-shell --eval-cmd "$_cmd"
+            exec "$LAUNCHER_PATH" iexec --set-shell --run-shell "$_cmd"
             ;;
 
         # Otherwise, simply execute the command
         * )
-            exec "$SHELL_PROG" -c "$_cmd"
+            # shellcheck disable=SC2086
+            exec "$SHELL_PROG" $_shell_opts -c "$_cmd"
             ;;
     esac
 }
