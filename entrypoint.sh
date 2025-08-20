@@ -113,7 +113,10 @@ execute_command() {
             exec "$LAUNCHER_PATH" iexec --set-shell "$_cmd"
             ;;
         sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
-            exec "$LAUNCHER_PATH" iexec --set-shell --run-shell "$_cmd"
+            exec "$LAUNCHER_PATH" iexec --set-shell \
+                --run-shell \
+                --run-shell-prog="$SHELL_PROG" \
+                "$_cmd"
             ;;
 
         # Otherwise, simply execute the command
