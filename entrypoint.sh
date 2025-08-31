@@ -110,8 +110,8 @@ execute_command() {
             ;;
 
         # If command is a shell, call it with "iexec" subcommand
-        #   * it will initialize required environment variables
-        #   * --set-shell will set SHELL to our preferred login shell (zsh if available)
+        # - "iexec" initialize required environment variables of dotfiles project
+        # - --set-shell set SHELL to our preferred login shell (zsh if available)
         sh | bash | zsh )
             exec "$LAUNCHER_PATH" iexec --set-shell "$_cmd"
             ;;
