@@ -6,8 +6,9 @@ fi
     setopt localoptions histsubstpattern
 
     typeset -g _nmk_is_vendored_zsh=0
-    for p in $fpath; do
-        if [[ $p == /nmk-vendor* ]]; then
+    local fp
+    for fp in $fpath; do
+        if [[ $fp == /nmk-vendor* ]]; then
             _nmk_is_vendored_zsh=1
             break
         fi
@@ -34,6 +35,7 @@ fi
         /usr/share/zsh/vendor-completions
         /usr/share/zsh/vendor-functions
     )
+    local dir
     for dir in $additional_fpath; do
         if [[ -d $dir && ${fpath[(r)$dir]} != $dir ]]; then
             fpath+=$dir
