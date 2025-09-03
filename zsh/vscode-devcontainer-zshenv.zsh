@@ -6,20 +6,23 @@
 # A helper function to set ZDOTDIR to DEVCON_<USERNAME>_ZDOTDIR in devcontainer environment
 function {
     setopt localoptions noshwordsplit
-    local -a exec_args
-    local -a flags
-    local launcher
-    local zdotdir_env="DEVCON_${(U)USERNAME}_ZDOTDIR"
-    local zsh_path
-    # The "-z $ZDOTDIR" check is necessary, to prevent recursively source itself.
-    if [[ -z $ZDOTDIR && -n $REMOTE_CONTAINERS_IPC && ${(P)zdotdir_env+set} = set ]]; then
-        local zdotdir=${(P)zdotdir_env}
+    local devcon_zdotdir
+
+    if [[ -n $ZDOTDIR || -z $REMOTE_CONTAINERS_IPC ]]; then
+        return 0
+    fi
+
+    devcon_zdotdir="DEVCON_${(U)USERNAME}_ZDOTDIR"
+    if [[ ${(P)devcon_zdotdir+set} = set ]]; then
+        local zdotdir=${(P)devcon_zdotdir}
         if [[ -d $zdotdir ]]; then
             # vscode call zsh to determine environment variable using following format command
             # zsh -lic "echo -n $UUID; cat /proc/self/environ; echo -n $UUID"
+            # it may use -lic, -lc or -ic flags, depends on userEnvProbe value
             if [[ $ZSH_EXECUTION_STRING == echo*"cat /proc/self/environ; echo"* ]]; then
                 # all conditions are met.
                 # this shell is running from devcontainer to capture user environment variables
+                local -a flags
                 flags+=-
                 if [[ -o login ]]; then
                     flags+=l
@@ -28,17 +31,29 @@ function {
                     flags+=i
                 fi
                 flags+=c
+
+                # get path to binary of zsh running this script
+                # we don't need to support macOS, because devcontainer runs in linux only
+                local zsh_path
                 zsh_path=/proc/self/exe
+                # :A resolve symbolic links
                 zsh_path=${zsh_path:A}
-                exec_args=($zsh_path ${(j::)flags} $ZSH_EXECUTION_STRING)
+
+                local -a args
+                args=($zsh_path ${(j::)flags} $ZSH_EXECUTION_STRING)
+
+                # re-execute this command again under correct environment
+                # if launcher is found, use the launcher, otherwise, set ZDOTDIR and execute
+
+                # we assume that the launcher is located at $ZDOTDIR/../bin/nmk
+                local launcher
                 launcher=${zdotdir:h}/bin/nmk
+
                 if [[ -x $launcher ]]; then
-                    # re-execute itself under our launcher
-                    exec $launcher --no-std-log iexec ${exec_args[@]}
+                    exec $launcher --no-std-log iexec ${args[@]}
                 else
-                    # re-execute itself but with updated ZDOTDIR
                     export ZDOTDIR=$zdotdir
-                    exec ${exec_args[@]}
+                    exec ${args[@]}
                 fi
             fi
         fi
