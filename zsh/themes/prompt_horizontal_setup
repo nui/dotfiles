@@ -54,7 +54,7 @@ prompt_horizontal_gen_padding() {
 
 	prompt_horizontal_plaintext "${(j::)@}"
 	integer prompt_length=$#prompt_horizontal_plaintext_result
-	integer n=$((COLUMNS - prompt_length - 1))
+	integer n=$((COLUMNS - prompt_length))
 	((n < 0)) && n=$((COLUMNS * 2 - prompt_length))
 	local IFS=${horizontal[fill_character]}
 	if ((n > 0)); then
