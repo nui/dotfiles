@@ -21,14 +21,22 @@ prompt_horizontal_plaintext() {
 prompt_horizontal_reset_prompt() {
 	setopt localoptions noshwordsplit
 
+	readonly ctrl_c_code=130
 	# face color
 	readonly happy='green'
 	readonly sad='red'
 
+	local error_code_face
+
 	if ((${horizontal[color]})); then
 		# prompt face turn green if the previous command did exit with 0,
-		# otherwise turn yellow
-		PROMPT="%F{${horizontal[base_color]}} '--%f%B>%(1j. %F{red}%j!%f.) %(?.%F{$happy}:%).%F{$sad}:()%b%f "
+		# otherwise, turn red
+		if ((${horizontal[show_error_code]})); then
+			error_code_face="%F{$sad}%(1?.:(.%($ctrl_c_code?.:(.:|%?))"
+		else
+			error_code_face="%F{$sad}:("
+		fi
+		PROMPT="%F{${horizontal[base_color]}} '--%f%B>%(1j. %F{${horizontal[base_color]}}%j!%f.) %(?.%F{$happy}:%).$error_code_face)%b%f "
 		# restore prompt highlighting if needed
 		if ((${#ZSH_HIGHLIGHT_HIGHLIGHTERS} == 0)); then
 			ZSH_HIGHLIGHT_HIGHLIGHTERS=($prompt_horizontal_orig_zsh_highlight_highlighters)
@@ -383,6 +391,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[set_title]:=1}
 	: ${horizontal[show_conda]:=1}
 	: ${horizontal[show_exec_or_idle_duration]:=1}
+	: ${horizontal[show_error_code]:=1}
 	: ${horizontal[show_git]:=1}
 	: ${horizontal[show_git_dirty_status]:=1}
 	: ${horizontal[show_pyenv_version]:=1}
