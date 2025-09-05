@@ -13,9 +13,7 @@
 # ) >> ~/vscode-devcontainer.log
 
 
-# A helper function to set ZDOTDIR to DEVCON_<USERNAME>_ZDOTDIR in vscode devcontainer environment
-#
-# For example, if current user is "user", it will use "DEVCON_USER_ZDOTDIR" variable
+# A helper function to initialize zsh on vscode devcontainer environment
 #
 # There are two ways to use this function
 #   1. source this file from .zshenv at very beginning of file
@@ -26,7 +24,8 @@ function {
     # userEnvProbe runs on zsh shell with one or both of following options
     #   - interactive
     #   - login
-    # return if the current shell is non-interactive non-login shell
+    #
+    # return if running on non-interactive non-login shell
     if [[ ! -o interactive && ! -o login ]]; then
         return 0
     fi
@@ -38,9 +37,7 @@ function {
         return 0
     fi
 
-    local devcon_zdotdir="DEVCON_${(U)USERNAME}_ZDOTDIR"
-    local zdotdir=${(P)devcon_zdotdir}
-    if [[ -z $zdotdir || ! -d $zdotdir ]]; then
+    if [[ -z $NMK_HOME || ! -d $NMK_HOME ]]; then
         return 0
     fi
 
@@ -65,40 +62,22 @@ function {
         return 0
     fi
 
-    # at this point, all test conditions are satisfied.
-
-    # construct correct zsh flags by testing options
-    local zsh_flags=-
-    if [[ -o login ]]; then
-        zsh_flags+=l
-    fi
-    if [[ -o interactive ]]; then
-        zsh_flags+=i
-    fi
-    zsh_flags+=c
-
-    # resolve binary path of current running zsh using procfs
+    # rebuild zsh command from /proc/self/cmdline via splitting by null byte
     # we don't need to support macOS, devcontainer runs on linux only
-    local zsh_path=/proc/self/exe
-    # :A resolve symbolic links
-    zsh_path=${zsh_path:A}
+    local -a cmd_with_args=(${(0)"$(</proc/self/cmdline)"})
 
-    local -a args
-    args=($zsh_path $zsh_flags $ZSH_EXECUTION_STRING)
+
 
     # re-execute this command again under correct environment
-
-    # we assume that the launcher is located at $ZDOTDIR/../bin/nmk
-    local launcher=${zdotdir:h}/bin/nmk
-
+    local launcher=${NMK_LAUNCHER_PATH:-$NMK_HOME/bin/nmk}
     # if the launcher is found and executable bit is set, use it
     if [[ -x $launcher ]]; then
         # --no-log is optional but we don't really need logging here
-        exec $launcher --no-log iexec ${args[@]}
+        exec $launcher --no-log iexec ${cmd_with_args[@]}
     # otherwise, set ZDOTDIR and execute
     else
-        export ZDOTDIR=$zdotdir
-        exec ${args[@]}
+        export ZDOTDIR=$NMK_HOME/zsh
+        exec ${cmd_with_args[@]}
     fi
 }
 
