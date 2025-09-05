@@ -391,7 +391,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[set_title]:=1}
 	: ${horizontal[show_conda]:=1}
 	: ${horizontal[show_exec_or_idle_duration]:=1}
-	: ${horizontal[show_error_code]:=1}
+	: ${horizontal[show_error_code]:=0}
 	: ${horizontal[show_git]:=1}
 	: ${horizontal[show_git_dirty_status]:=1}
 	: ${horizontal[show_pyenv_version]:=1}
