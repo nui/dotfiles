@@ -2,6 +2,7 @@
 autoload -Uz cdd
 autoload -Uz cde
 
+# do not save 'cd' to history
 alias cd=' cd'
 [[ $OSTYPE == linux* ]] && alias cp='cp --reflink=auto'
 alias grep='grep --color=auto'

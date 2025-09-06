@@ -1,10 +1,10 @@
 # Initialize required variables if not start from our launcher
+#
+# NMK_LAUNCHER_PATH is set by the launcher
 if [[ ! -e $NMK_LAUNCHER_PATH ]]; then
-    # Why this block is reached?
-    #   - macOS shell (macOS doesn't start login shell on login)
-    #   - ssh login to linux that doesn't call launcher
-    #   - newly setup linux
-
+    # This block is reachable because the launcher has never been run
+    #
+    # we setup minimum required variables of dotfiles project
     (( ! ${+NMK_HOME} )) && {
         # In our setup, ZDOTDIR always under NMK_HOME
         # :A modifier is used to follow symlink correctly
