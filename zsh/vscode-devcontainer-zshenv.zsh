@@ -23,6 +23,9 @@
 function {
     setopt localoptions noshwordsplit
 
+
+    # --- STAGE 1: Early return if not running under right condition ---
+
     # userEnvProbe runs on zsh shell with one or both of following options
     #   - interactive
     #   - login
@@ -63,13 +66,15 @@ function {
         return 0
     fi
 
+
+    # --- STAGE 2: Re-execute under correct environment  ---
+    #
+    # we have to exec because we have to skip the rest of caller .zshenv
+
     # rebuild zsh command from /proc/self/cmdline via splitting by null byte
     # we don't need to support macOS, devcontainer runs on linux only
     local -a cmd_with_args=(${(0)"$(</proc/self/cmdline)"})
 
-
-
-    # re-execute this command again under correct environment
     local launcher=${NMK_LAUNCHER_PATH:-$NMK_HOME/bin/nmk}
     # if the launcher is found and executable bit is set, use it
     if [[ -x $launcher ]]; then
