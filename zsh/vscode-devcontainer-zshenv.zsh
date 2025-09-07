@@ -78,8 +78,9 @@ function {
     local launcher=${NMK_LAUNCHER_PATH:-$NMK_HOME/bin/nmk}
     # if the launcher is found and executable bit is set, use it
     if [[ -x $launcher ]]; then
-        # --no-log is optional but we don't really need logging here
-        exec $launcher --no-log iexec ${cmd_with_args[@]}
+        # * --no-log is optional but we don't really need logging here
+        # * --no-vendor, I think we should not change LD_LIBRARY_PATH during environment collecting.
+        exec $launcher --no-log --no-vendor iexec ${cmd_with_args[@]}
     # otherwise, set ZDOTDIR and execute
     else
         export ZDOTDIR=$NMK_HOME/zsh
