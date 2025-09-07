@@ -15,6 +15,8 @@
 
 # A helper function to initialize zsh on vscode devcontainer environment
 #
+# This function set ZDOTDIR to NMK_HOME/zsh if NMK_HOME is set
+#
 # There are two ways to use this function
 #   1. source this file from .zshenv at very beginning of file
 #   2. symbolic link .zshenv to this file
@@ -30,13 +32,12 @@ function {
         return 0
     fi
 
-    # return if $ZDOTDIR is set or not running under vscode
-    #
-    # The only case when ZDOTDIR is set, is when it is set to HOME directory
-    if [[ -n $ZDOTDIR || -z $REMOTE_CONTAINERS_IPC ]]; then
+    # return if not running under vscode
+    if [[ -z $REMOTE_CONTAINERS_IPC ]]; then
         return 0
     fi
 
+    # return if NMK_HOME is not provided
     if [[ -z $NMK_HOME || ! -d $NMK_HOME ]]; then
         return 0
     fi
