@@ -45,7 +45,7 @@ setup_aws_completion() {
 }
 
 (( ${+commands[argocd]} )) && argocd completion zsh > $ZSH_COMPLETE_DIR/_argocd
-(( ${+commands[bat]} )) && bat --completion zsh > $ZSH_COMPLETE_DIR/_bat
+(( ${+commands[bat]} )) && bat --completion zsh > $ZSH_COMPLETE_DIR/_bat 2>/dev/null
 (( ${+commands[cilium]} )) && cilium completion zsh > $ZSH_COMPLETE_DIR/_cilium
 (( ${+commands[cmctl]} )) && cmctl completion zsh > $ZSH_COMPLETE_DIR/_cmctl
 (( ${+commands[docker]} )) && docker completion zsh > $ZSH_COMPLETE_DIR/_docker
