@@ -1,9 +1,13 @@
 [[templates]]
+name = "Cargo"
+file = "files/cargo.sh"
+language = "sh"
+
+[[templates]]
 name = "compose.yml"
 file = "files/compose.yml"
 output = "compose.yml"
 language = "yaml"
-
 
 [[templates]]
 name = "docker quickfix"
