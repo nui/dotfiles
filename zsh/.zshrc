@@ -83,7 +83,14 @@ autoload -Uz cde
 alias cd=' cd'
 [[ $OSTYPE == linux* ]] && alias cp='cp --reflink=auto'
 alias grep='grep --color=auto'
+
+if [[ $OSTYPE == darwin* ]]; then
+    (( ${+aliases[run-help]} )) && unalias run-help
+    autoload -Uz run-help
+    HELPDIR=${HELPDIR:-/usr/share/zsh/$ZSH_VERSION/help}
+fi
 alias help=run-help
+
 () {
     local -a ls_options
     local color
