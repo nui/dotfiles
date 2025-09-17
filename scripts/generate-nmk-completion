@@ -9,7 +9,6 @@ cd ${0:a:h}
 
 ZSH_COMPLETE_DIR=$ZDOTDIR/completion
 
-(( ${+commands[nmk]} )) && nmk completions zsh -o "$ZSH_COMPLETE_DIR/_nmk"
 (( ${+commands[nbox]} )) && nbox completions zsh -o "$ZSH_COMPLETE_DIR/_nbox"
 (( ${+commands[nmkup]} )) && nmkup --write-zsh-completion "$ZSH_COMPLETE_DIR/_nmkup"
-
+(( ${+commands[nmk]} )) && nmk completions zsh -o "$ZSH_COMPLETE_DIR/_nmk"
