@@ -1,4 +1,4 @@
-FROM alpine AS alpine
+FROM alpine AS dotfiles-alpine
 
 RUN apk add --update curl tmux zsh neovim
 
@@ -12,3 +12,27 @@ for bin in nmk nmkup; do
 done
 EOS
 
+FROM ubuntu:24.04 AS dotfiles-ubuntu
+RUN <<'EOS'
+set -ex
+export DEBIAN_FRONTEND=noninteractive
+apt-get -yq update
+apt-get -yq upgrade
+apt-get -yq --no-install-recommends install \
+        ca-certificates \
+        curl \
+        neovim \
+        tmux \
+        zsh
+rm -rf /var/lib/apt/lists/*
+EOS
+
+RUN <<'EOS'
+set -ex
+curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
+sh setup.sh -y
+rm setup.sh
+for bin in nmk nmkup; do
+    ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
+done
+EOS

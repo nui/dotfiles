@@ -1,4 +1,4 @@
-name: Build and publish dotfiles alpine image
+name: Build and publish dotfiles ubuntu image
 
 on:
   schedule:
@@ -43,12 +43,11 @@ jobs:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
+            type=ref,event=branch,suffix=-ubuntu
+            type=ref,event=tag,suffix=-ubuntu
+            type=ref,event=pr,suffix=-ubuntu
             # set latest tag for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=alpine,enable={{is_default_branch}}
+            type=raw,value=ubuntu,enable={{is_default_branch}}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -58,7 +57,7 @@ jobs:
         with:
           context: docker
           file: docker/Dockerfile.dotfiles
-          target: dotfiles-alpine
+          target: dotfiles-ubuntu
           pull: true
           push: true
           no-cache: true
