@@ -178,8 +178,12 @@ prompt_horizontal_preprompt_render() {
 		local timestamp
 		local symbol
 
+		local name
+
 		integer show_exec_or_idle_humantime=0
 		integer show_virtualenv_name=0
+		integer name_max_length=${horizontal[name_max_length]}
+		integer name_truncate_at=$(( name_max_length - 3 ))
 
 		# tmux named session
 		((${horizontal[show_tmux_named_session]})) && [[ -n $NMK_SHELL_NAMED_SESSION ]] && {
@@ -201,7 +205,11 @@ prompt_horizontal_preprompt_render() {
 		((${horizontal[show_pyenv_version]})) && [[ -n $PYENV_VERSION ]] && {
 			symbol=${horizontal_symbol[pyenv]}
 			((! ${horizontal[iconic_font]})) && symbol="PE:"
-			prompt_status+="$symbol${${PYENV_VERSION}:0:12}"
+			name=$PYENV_VERSION
+			(( $#name > name_max_length )) && {
+				name=${${name}:0:$name_truncate_at}...
+			}
+			prompt_status+="$symbol$name"
 		}
 
 		# python virtual environment
@@ -210,14 +218,22 @@ prompt_horizontal_preprompt_render() {
 			show_virtualenv_name=1
 			symbol=${horizontal_symbol[python]}
 			((! ${horizontal[iconic_font]})) && symbol="P:"
-			prompt_status+="$symbol${${VIRTUAL_ENV:t}:0:12}"
+			name=${VIRTUAL_ENV:t}
+			(( $#name > name_max_length )) && {
+				name=${${name}:0:$name_truncate_at}...
+			}
+			prompt_status+="$symbol$name"
 		}
 
 		# conda environment
 		((${horizontal[show_conda]})) && [[ -n $CONDA_PREFIX ]] && (( show_virtualenv_name != 1 )) && {
 			symbol=${horizontal_symbol[conda]}
 			((! ${horizontal[iconic_font]})) && symbol="C:"
-			prompt_status+="$symbol${${CONDA_PREFIX:t}:0:12}"
+			name=${CONDA_PREFIX:t}
+			(( $#name > name_max_length )) && {
+				name=${${name}:0:$name_truncate_at}...
+			}
+			prompt_status+="$symbol$name"
 		}
 
 		# last command execute time
@@ -409,6 +425,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[cozy_first_line]:=0}
 	# horizontal_hostname=my-host-name
 	# horizontal_status_separator="%F{${horizontal[base_color]}} | %f"
+	: ${horizontal[name_max_length]:=20}
 	: ${horizontal_symbol[conda]:= }
 	: ${horizontal_symbol[git_branch]:=}
 	: ${horizontal_symbol[pyenv]:= }
