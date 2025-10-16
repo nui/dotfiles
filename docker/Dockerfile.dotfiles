@@ -5,9 +5,9 @@ RUN apk add --update curl tmux zsh neovim
 RUN <<'EOS'
 set -ex
 curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
-sh setup.sh -y
+sh setup.sh -y --nbox
 rm setup.sh
-for bin in nmk nmkup; do
+for bin in nmk nmkup nbox; do
     ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
 done
 EOS
@@ -30,9 +30,9 @@ EOS
 RUN <<'EOS'
 set -ex
 curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
-sh setup.sh -y
+sh setup.sh -y --nbox
 rm setup.sh
-for bin in nmk nmkup; do
+for bin in nmk nmkup nbox; do
     ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
 done
 EOS
