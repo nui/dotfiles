@@ -2,12 +2,7 @@
 () {
     typeset -a managers
     # Detect jenv
-    (( ${+commands[jenv]} )) && {
-        managers+=(jenv)
-        function init-jenv {
-            eval "$(jenv init -)"
-        }
-    }
+    (( ${+commands[jenv]} )) && managers+=(jenv)
     # Detect nvm
     # nvm recommends git checkout not brew
     export NVM_DIR=${NVM_DIR:-$HOME/.nvm}
@@ -19,6 +14,7 @@
             # avoid calling `nvm use` again
             (( ${+NVM_BIN} )) && cmd+=' --no-use'
             eval "$cmd"
+            unfunction init-nvm
         }
     }
     # Detect pyenv, both by brew or git
@@ -44,6 +40,7 @@
                     unfunction virtualenv-init
                 }
             fi
+            unfunction init-pyenv
         }
     }
     # Detect rbenv, both by brew or git
@@ -55,6 +52,7 @@
             else
                 eval "$(rbenv init - zsh)"
             fi
+            unfunction init-rbenv
         }
     }
     # set default value if nmk_version_managers is unset
@@ -62,18 +60,19 @@
         typeset -ga nmk_version_managers
         nmk_version_managers=($managers)
     }
-    zsh-defer -c 'init-version-managers; unfunction init-version-managers'
+    zsh-defer init-version-managers
 }
 
-init-version-managers() {
+function init-version-managers() {
     local manager
     for manager in $nmk_version_managers; do
         case $manager in
-            jenv  ) init-jenv; unfunction init-jenv ;;
-            nvm   ) init-nvm; unfunction init-nvm ;;
-            pyenv ) init-pyenv; unfunction init-pyenv ;;
-            rbenv ) init-rbenv; unfunction init-rbenv ;;
+            jenv  ) eval "$(jenv init -)" ;;
+            nvm   ) init-nvm ;;
+            pyenv ) init-pyenv ;;
+            rbenv ) init-rbenv ;;
         esac
     done
+    unfunction init-version-managers
 }
 
