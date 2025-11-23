@@ -62,13 +62,18 @@
         typeset -ga nmk_version_managers
         nmk_version_managers=($managers)
     }
+    zsh-defer -c 'init-version-managers; unfunction init-version-managers'
+}
+
+init-version-managers() {
     local manager
     for manager in $nmk_version_managers; do
         case $manager in
-            jenv ) init-jenv; unfunction init-jenv ;;
-            nvm ) init-nvm; unfunction init-nvm ;;
+            jenv  ) init-jenv; unfunction init-jenv ;;
+            nvm   ) init-nvm; unfunction init-nvm ;;
             pyenv ) init-pyenv; unfunction init-pyenv ;;
             rbenv ) init-rbenv; unfunction init-rbenv ;;
         esac
     done
 }
+

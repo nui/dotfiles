@@ -14,3 +14,7 @@
 	path = zsh/plugins/pure
 	url = https://github.com/sindresorhus/pure.git
 	branch = main
+[submodule "zsh/plugins/zsh-defer"]
+	path = zsh/plugins/zsh-defer
+	url = https://github.com/romkatv/zsh-defer.git
+	branch = master

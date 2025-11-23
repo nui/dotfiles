@@ -34,6 +34,7 @@ stty -ixon # vim in remote ssh connection need this
 HISTFILE="${HISTFILE:-${ZDOTDIR}/.zsh_history}"
 HISTSIZE=5000
 SAVEHIST=$HISTSIZE
+source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
 autoload -Uz compinit
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete _correct _approximate
@@ -541,16 +542,21 @@ add-zsh-hook preexec _nmk_preexec
         typeset -ga nmk_version_managers
         nmk_version_managers=($managers)
     }
+    zsh-defer -c 'init-version-managers; unfunction init-version-managers'
+}
+
+init-version-managers() {
     local manager
     for manager in $nmk_version_managers; do
         case $manager in
-            jenv ) init-jenv; unfunction init-jenv ;;
-            nvm ) init-nvm; unfunction init-nvm ;;
+            jenv  ) init-jenv; unfunction init-jenv ;;
+            nvm   ) init-nvm; unfunction init-nvm ;;
             pyenv ) init-pyenv; unfunction init-pyenv ;;
             rbenv ) init-rbenv; unfunction init-rbenv ;;
         esac
     done
 }
+
 [[ -e /etc/zsh_command_not_found ]] && source /etc/zsh_command_not_found
 typeset -U path
 () {
