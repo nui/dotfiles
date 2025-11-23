@@ -35,7 +35,7 @@ function {
         return 0
     fi
 
-    # return if not running under vscode
+    # return if not running under vscode devcontainer
     if [[ -z $REMOTE_CONTAINERS_IPC ]]; then
         return 0
     fi
