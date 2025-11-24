@@ -76,6 +76,12 @@ zstyle ':completion:*:(ssh|scp|sftp):*' hosts off
 }
 compinit
 
+() {
+    local file
+    for file ($ZDOTDIR/zshrc.clap-dynamic-completion.d/*.zsh(N)) {
+        [[ -e $file ]] && source $file
+    }
+}
 # Aliases and interactive shell configuration
 autoload -Uz cdd
 autoload -Uz cde

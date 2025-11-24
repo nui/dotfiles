@@ -24,6 +24,7 @@ nmk.toml
 /zsh/local/
 /zsh/zprofile
 /zsh/zshenv.extra
+/zsh/zshrc.clap-dynamic-completion.d/
 /zsh/zshrc.extra.d/
 /zsh/zshrc.pre.d/
 firebase-debug.log*
