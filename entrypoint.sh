@@ -111,13 +111,16 @@ execute_command() {
 
         # If command is a shell, call it with "iexec" subcommand
         # - "iexec" initialize required environment variables of dotfiles project
-        # - --set-shell set SHELL to our preferred login shell (zsh if available)
+        # - --set-user-shell set SHELL to our preferred login shell (zsh if available)
         sh | bash | zsh )
-            exec "$LAUNCHER_PATH" iexec --set-shell "$_cmd"
+            exec "$LAUNCHER_PATH" iexec \
+                --set-user-shell \
+                "$_cmd"
             ;;
         sh[[:space:]]* | bash[[:space:]]* | zsh[[:space:]]* )
-            exec "$LAUNCHER_PATH" iexec --set-shell \
-                --shell \
+            exec "$LAUNCHER_PATH" iexec \
+                --set-user-shell \
+                --with-shell \
                 --shell-prog="$SHELL_PROG" \
                 "$_cmd"
             ;;
