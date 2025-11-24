@@ -29,7 +29,7 @@ jobs:
       image: ghcr.io/${{ github.repository }}/workflow
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build tar file
         run: |
           set -ex
