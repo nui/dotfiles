@@ -1,4 +1,4 @@
-autoload -Uz compinit
+autoload -Uz compinit && compinit
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
@@ -37,5 +37,4 @@ zstyle ':completion:*:(ssh|scp|sftp):*' hosts off
         fi
     done
 }
-compinit
 

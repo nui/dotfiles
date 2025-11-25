@@ -35,7 +35,7 @@ HISTFILE="${HISTFILE:-${ZDOTDIR}/.zsh_history}"
 HISTSIZE=5000
 SAVEHIST=$HISTSIZE
 source $ZDOTDIR/plugins/zsh-defer/zsh-defer.plugin.zsh
-autoload -Uz compinit
+autoload -Uz compinit && compinit
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
@@ -74,12 +74,12 @@ zstyle ':completion:*:(ssh|scp|sftp):*' hosts off
         fi
     done
 }
-compinit
 
 () {
     local file
     for file ($ZDOTDIR/zshrc.clap-dynamic-completion.d/*.zsh(N)) {
-        [[ -e $file ]] && source $file
+        # we need zsh-defer here to make it works on linux
+        [[ -e $file ]] && zsh-defer source $file
     }
 }
 # Aliases and interactive shell configuration
