@@ -1,4 +1,5 @@
-# Uncomment this code to debug this script problem
+# Uncomment this code log environment variables
+# For debugging problem releated to this script
 # (
 #     echo ">> date: $(date)"
 #     echo ">> cmdline"
@@ -15,7 +16,7 @@
 
 # A helper function to initialize zsh on vscode devcontainer environment
 #
-# This function set ZDOTDIR to NMK_HOME/zsh if NMK_HOME is set
+# This function set ZDOTDIR to $NMK_HOME/zsh if NMK_HOME is set
 #
 # There are two ways to use this function
 #   1. source this file from .zshenv at very beginning of file
@@ -24,7 +25,7 @@ function {
     setopt localoptions noshwordsplit
 
 
-    # --- STAGE 1: Early return if not running under right condition ---
+    # --- STAGE 1: Early return if not running under right conditions ---
 
     # userEnvProbe runs on zsh shell with one or both of following options
     #   - interactive
