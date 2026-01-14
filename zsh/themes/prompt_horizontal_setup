@@ -327,7 +327,7 @@ prompt_horizontal_preprompt_render() {
 
 	if [[ $prompt_horizontal_last_prompt != $expanded_prompt ]]; then
 		# Redraw the prompt.
-		zle && zle .reset-prompt
+		zle && zle reset-prompt
 	fi
 
 	typeset -g prompt_horizontal_last_prompt=$expanded_prompt
