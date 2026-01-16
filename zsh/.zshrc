@@ -363,7 +363,9 @@ fi
         # Hide user and host in prompt if NMK_DEVELOPMENT is true by default,
         # this is not apply to zsh in ssh session and shell running in devcontainer
         [[ $NMK_DEVELOPMENT == true && -z $SSH_TTY && $REMOTE_CONTAINERS != true ]] && {
-            horizontal[show_user_and_host]=0
+            if (( horizontal[show_user_and_host] == -1 )) && {
+                horizontal[show_user_and_host]=0
+            }
         }
 
         # Change prompt color on remote session

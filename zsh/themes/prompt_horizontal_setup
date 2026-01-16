@@ -133,7 +133,7 @@ prompt_horizontal_git_dirty() {
 }
 
 prompt_horizontal_userhost() {
-	if [[ ${horizontal[show_user_and_host]} == 1 ]]; then
+	if ((${horizontal[show_user_and_host]})); then
 		typeset -g prompt_horizontal_userhost_result="%b%f%n|${horizontal_hostname:-%m}%f: "
 	else
 		typeset -g prompt_horizontal_userhost_result=
@@ -447,7 +447,7 @@ prompt_horizontal_setup() {
 	: ${horizontal[show_pyenv_version]:=1}
 	: ${horizontal[show_timestamp]:=1}
 	: ${horizontal[show_tmux_named_session]:=1}
-	: ${horizontal[show_user_and_host]:=1}
+	: ${horizontal[show_user_and_host]:=-1} # -1 represent that value is unset
 	: ${horizontal[show_virtualenv]:=1}
 	: ${horizontal[status]:=1}
 
