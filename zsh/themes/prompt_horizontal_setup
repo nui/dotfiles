@@ -163,11 +163,13 @@ prompt_horizontal_set_title() {
 prompt_horizontal_preprompt_render() {
 	setopt localoptions noshwordsplit
 
+	local base_preprompt
 	local preprompt
 	local rpreprompt
 
 	prompt_horizontal_userhost
 	preprompt="%b%F{${horizontal[base_color]}}.-%B(${prompt_horizontal_userhost_result}%B%F{blue}%~%F{${horizontal[base_color]}})%b%F{${horizontal[base_color]}}-%f"
+	base_preprompt=$preprompt
 
 	((${horizontal[status]})) && {
 
@@ -313,16 +315,34 @@ prompt_horizontal_preprompt_render() {
 	local expanded_prompt
 	expanded_prompt="${(S%%)PROMPT}"
 
-	# blank line before preprompt line
-	((${horizontal[cozy]})) && {
-		typeset -g prompt_horizontal_cozy_is_first_line
-		: ${prompt_horizontal_cozy_is_first_line:=1}
-		if (( prompt_horizontal_cozy_is_first_line == 1 )); then
-			((${horizontal[cozy_first_line]})) && print
-			prompt_horizontal_cozy_is_first_line=0
-		else
-			print
-		fi
+	# Fixing prompt redraw in tmux history
+	(( ${horizontal[fix_tmux_history]} && prompt_horizontal_precmd_iteration == 1 )) && [[ -n $TMUX ]] && {
+		local fix_line
+		(( ${horizontal[fix_tmux_history_fancy]} )) && {
+			prompt_horizontal_plaintext $base_preprompt
+			local preprompt_base_length=${#prompt_horizontal_plaintext_result}
+
+			(( preprompt_base_length <= COLUMNS )) && {
+				local hat_length=$(( $preprompt_base_length - 3 - 2 ))
+				hat_length=$(( hat_length >= 0 ? hat_length : 0 ))
+				local hat=${(l:$hat_length::-:)}
+				fix_line="   %F{${horizontal[base_color]}}$hat%f"
+				if ((${horizontal[color]} == 0)); then
+					prompt_horizontal_plaintext $fix_line
+					fix_line=$prompt_horizontal_plaintext_result
+				fi
+			}
+		}
+		# The prompt is redrawn multiple times during zsh initialization.
+		# If the first cozy line is not printed, tmux will remember redraw history
+		#
+		# See this comment for possible cause, https://superuser.com/a/395784/457222
+		print -P $fix_line
+	}
+
+	# A blank line before preprompt line
+	(( ${horizontal[cozy]} && prompt_horizontal_zle_line_init_count > 0 )) && {
+		print
 	}
 
 	if [[ $prompt_horizontal_last_prompt != $expanded_prompt ]]; then
@@ -335,6 +355,9 @@ prompt_horizontal_preprompt_render() {
 
 prompt_horizontal_precmd() {
 	setopt localoptions noshwordsplit
+
+	integer -g prompt_horizontal_precmd_iteration
+	prompt_horizontal_precmd_iteration+=1
 
 	# calculate exec and idle seconds
 	prompt_horizontal_calculate_exec_seconds
@@ -375,6 +398,10 @@ prompt_horizontal_set_precmd_start() {
 	typeset -g prompt_horizontal_precmd_start=$EPOCHSECONDS
 }
 
+prompt_horizontal_zle-line-init() {
+	prompt_horizontal_zle_line_init_count+=1
+}
+
 prompt_horizontal_setup() {
 	setopt localoptions noshwordsplit
 
@@ -382,6 +409,8 @@ prompt_horizontal_setup() {
 	typeset -gA horizontal_default
 	typeset -gA horizontal_symbol
 	typeset -gA horizontal_threshold
+
+	typeset -g -i prompt_horizontal_zle_line_init_count
 
 	# Determine last zsh hook that we use
 	# possible values :
@@ -402,6 +431,8 @@ prompt_horizontal_setup() {
 	# feature toggle section
 	: ${horizontal[color]:=1}
 	: ${horizontal[cozy]:=1}
+	: ${horizontal[fix_tmux_history]:=1}
+	: ${horizontal[fix_tmux_history_fancy]:=1}
 	: ${horizontal[hr]:=1}
 	: ${horizontal[iconic_font]:=1}
 	: ${horizontal[set_title]:=1}
@@ -422,7 +453,6 @@ prompt_horizontal_setup() {
 	# commented out values are used as example configuration value
 	: ${horizontal[fill_character]:=-}
 	: ${horizontal[git_untracked_is_dirty]:=1}
-	: ${horizontal[cozy_first_line]:=0}
 	# horizontal_hostname=my-host-name
 	# horizontal_status_separator="%F{${horizontal[base_color]}} | %f"
 	: ${horizontal[name_max_length]:=20}
@@ -455,6 +485,9 @@ prompt_horizontal_setup() {
 
 	zmodload zsh/datetime
 	autoload -Uz add-zsh-hook
+
+	autoload -U add-zle-hook-widget
+	add-zle-hook-widget zle-line-init prompt_horizontal_zle-line-init
 
 	local load_vcs_result
 	load_vcs_result=$(autoload -Uz +X vcs_info 2>&1)
