@@ -1,4 +1,4 @@
 (( ${+commands[tput]} )) && tput reset
-zle clear-screen
 tmux clear-history
+zle .clear-screen
 # vi: ft=zsh
