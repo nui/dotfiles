@@ -10,6 +10,6 @@ if [[ ! -e $NMK_LAUNCHER_PATH ]]; then
         # :A modifier is used to follow symlink correctly
         export NMK_HOME=${ZDOTDIR:A:h}
     }
-    (( ! ${+VIMINIT} )) && export VIMINIT="source ${NMK_HOME:q}/vim/init.vim"
+    (( ! ${+VIMINIT} )) && export VIMINIT="source ${NMK_HOME}/vim/init.vim"
 fi
 
