@@ -320,7 +320,8 @@ prompt_horizontal_preprompt_render() {
 
 	if [[ $prompt_horizontal_last_prompt != $expanded_prompt ]]; then
 		# Redraw the prompt.
-		zle && zle reset-prompt
+		# This line is copied from https://github.com/sindresorhus/pure/blob/v1.26.0/pure.zsh#L652
+		zle && zle .reset-prompt
 	fi
 
 	typeset -g prompt_horizontal_last_prompt=$expanded_prompt
@@ -373,7 +374,7 @@ prompt_horizontal_set_precmd_start() {
 
 prompt_horizontal_zle-line-init() {
 	prompt_horizontal_line_init_called=1
-	# unregister the hook
+	# unregister itself
 	add-zle-hook-widget -d zle-line-init prompt_horizontal_zle-line-init
 }
 
