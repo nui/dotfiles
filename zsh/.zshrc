@@ -89,7 +89,7 @@ zstyle ':completion:*:(ssh|scp|sftp):*' hosts off
             file=$ZDOTDIR/zshrc.clap-dynamic-completion.d/${name}.zsh
             # we need zsh-defer to make dynamic completion work on linux
             # no idea why it doesn't work
-            [[ -e $file ]] && zsh-defer -mp source $file
+            [[ -e $file ]] && zsh-defer -a +1 +2 source $file
         }
     }
 }
@@ -560,7 +560,7 @@ add-zsh-hook preexec _nmk_preexec
         typeset -ga nmk_version_managers
         nmk_version_managers=($managers)
     }
-    zsh-defer -mp init-version-managers
+    zsh-defer -a +1 +2 init-version-managers
 }
 
 function init-version-managers() {

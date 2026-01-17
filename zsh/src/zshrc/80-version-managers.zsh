@@ -60,7 +60,7 @@
         typeset -ga nmk_version_managers
         nmk_version_managers=($managers)
     }
-    zsh-defer -mp init-version-managers
+    zsh-defer -a +1 +2 init-version-managers
 }
 
 function init-version-managers() {
