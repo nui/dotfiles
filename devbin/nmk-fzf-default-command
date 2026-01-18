@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ "$PWD" != "$HOME" ]; then
+    exec fd --type f --one-file-system $@
+else
+    echo >&2 "Home directory is not supported"
+fi
