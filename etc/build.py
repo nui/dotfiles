@@ -39,6 +39,7 @@ def build_parser():
 
 def clone_repo(branch):
     repo = Path(tempfile.mkdtemp(suffix=TMPDIR_SUFFIX))
+    # subprocess.run(['git', 'clone', '--recursive', '/Users/nui/.nmk', repo])
     subprocess.run(['git', 'clone', '--recursive', '-b', branch,
                     'https://github.com/nui/dotfiles.git', repo])
     return repo
@@ -113,9 +114,11 @@ def delete_unwanted_files(repo):
     os.remove(archive_path)
 
     with tarfile.open(archive_path, mode='x') as archive:
-        ignored_files = list_ignored_files(repo)
         ignored_dirs = list_ignored_dirs(repo)
+        ignored_files = list_ignored_files(repo)
+        included_dirs = list_included_dirs(repo)
         included_files = list_included_files(repo)
+        included_dirs_and_files = included_dirs + included_files
         def tar_filter(tarinfo):
             name = tarinfo.name
             ignored = any((
@@ -124,11 +127,14 @@ def delete_unwanted_files(repo):
                 name in ignored_dirs,
                 any((name.startswith(dir + '/') for dir in ignored_dirs))
             ))
-            if name in list_included_files(repo):
+            if name in included_dirs_and_files:
                 ignored = False
-            for file in included_files:
-                if file.startswith(name):
-                    ignored = False
+            # name is an ancestor directory of included files or directories
+            elif tarinfo.isdir() and any((item.startswith(name + '/') for item in included_dirs_and_files)):
+                ignored = False
+            # name is an descendant of an included directory
+            elif any((name.startswith(dir + '/') for dir in included_dirs)):
+                ignored = False
             return tarinfo if not ignored else None
         add_all_to_tar(src=repo, filter=tar_filter, archive=archive)
     tmp_dir = Path(tempfile.mkdtemp(TMPDIR_SUFFIX))
@@ -145,17 +151,6 @@ def add_all_to_tar(archive, src, filter):
     os.chdir(cwd)
 
 
-def list_ignored_files(repo):
-    ignore_file = repo.joinpath('.dotfilesignore')
-    lines = [line.strip() for line in open(ignore_file, 'rt').readlines()]
-    files = []
-    for line in lines:
-        if line.startswith('#') or line.strip() == '':
-            continue
-        if not line.endswith("/"):
-            files.append(line)
-    return files
-
 def list_ignored_dirs(repo):
     ignore_file = repo.joinpath('.dotfilesignore')
     lines = [line.strip() for line in open(ignore_file, 'rt').readlines()]
@@ -167,6 +162,31 @@ def list_ignored_dirs(repo):
             dirs.append(line.removesuffix("/"))
     return dirs
 
+
+def list_ignored_files(repo):
+    ignore_file = repo.joinpath('.dotfilesignore')
+    lines = [line.strip() for line in open(ignore_file, 'rt').readlines()]
+    files = []
+    for line in lines:
+        if line.startswith('#') or line.strip() == '':
+            continue
+        if not line.endswith("/"):
+            files.append(line)
+    return files
+
+
+def list_included_dirs(repo):
+    ignore_file = repo.joinpath('.dotfilesinclude')
+    lines = [line.strip() for line in open(ignore_file, 'rt').readlines()]
+    dirs = []
+    for line in lines:
+        if line.startswith('#') or line.strip() == '':
+            continue
+        if line.endswith("/"):
+            dirs.append(line.removesuffix("/"))
+    return dirs
+
+
 def list_included_files(repo):
     include_file = repo.joinpath('.dotfilesinclude')
     lines = [line.strip() for line in open(include_file, 'rt').readlines()]
@@ -174,8 +194,10 @@ def list_included_files(repo):
     for line in lines:
         if line.startswith('#') or line.strip() == '':
             continue
-        files.append(line)
+        if not line.endswith("/"):
+            files.append(line)
     return files
+
 
 def create_final_archive(workdir):
     mtime = int(datetime.now().timestamp())

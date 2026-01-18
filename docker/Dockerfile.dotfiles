@@ -1,6 +1,7 @@
 FROM alpine AS dotfiles-alpine
 
 RUN apk add --update curl tmux zsh neovim
+RUN apk add --update fzf ripgrep
 
 RUN <<'EOS'
 set -ex

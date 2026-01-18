@@ -81,7 +81,6 @@ let &mouse = ($NMK_DEVELOPMENT == 'true') ? 'a' : ''
 let g:NERDTreeBookmarksFile = g:nmk_config_dir.'/NERDTreeBookmarks'
 let g:NERDTreeIgnore = ['\.egg$', '\.o$', '\.obj$', '\.pyc$', '\.pyo$', '\.so$', '^\.git$', '^\.idea$', '^bower_components$', '^node_modules$', '^__pycache__$']
 let g:NERDTreeShowBookmarks = 1
-let g:ackprg = 'ag --vimgrep'
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline_powerline_fonts = exists('g:nmk_256color')
 let g:ctrlp_cache_dir = s:cache_dir."/ctrlp"
@@ -98,7 +97,11 @@ let g:jellybeans_use_term_background_color = 1
 let g:syntastic_quiet_messages = {'!level':  'errors'}
 let g:tcomment#filetype#guess_jinja = 1
 
-nnoremap <leader>ag :Ack!<Space>
+let g:fzf_vim = {}
+let g:fzf_vim.command_prefix = 'Fzf'
+if executable('fzf')
+    nnoremap <leader>rg :FzfRg<Space>
+endif
 
 nnoremap <leader>nc :NERDTreeClose<CR>
 nnoremap <leader>nf :NERDTreeFind<CR>

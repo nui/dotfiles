@@ -47,4 +47,6 @@ vim/plugins
 vim/plugins.lock.json
 vim/update-plugins
 
+vim/bundle/fzf/
 zsh/plugins/zsh-completions/src/
+
