@@ -23,6 +23,7 @@ nmk.toml
 /zsh/histories/
 /zsh/local/
 /zsh/zprofile
+/zsh/zprofile.d/*
 /zsh/zshenv.extra
 /zsh/zshrc.clap-dynamic-completion.d/
 /zsh/zshrc.extra.d/
