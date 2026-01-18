@@ -94,13 +94,14 @@ let g:ctrlp_user_command = {
     \ }
 let g:jellybeans_overrides = {'Comment': {'attr': ''}, 'DiffChange': {'guifg': 'E0FFFF', 'guibg': '2B5B77'}}
 let g:jellybeans_use_term_background_color = 1
-let g:syntastic_quiet_messages = {'!level':  'errors'}
 let g:tcomment#filetype#guess_jinja = 1
 
 let g:fzf_vim = {}
 let g:fzf_vim.command_prefix = 'Fzf'
 if executable('fzf')
     nnoremap <leader>rg :FzfRg<Space>
+else
+    nnoremap <silent><leader>rg :echo "error: fsf is not installed"<CR>
 endif
 
 nnoremap <leader>nc :NERDTreeClose<CR>
