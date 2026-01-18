@@ -21,7 +21,9 @@ apt-get -yq upgrade
 apt-get -yq --no-install-recommends install \
         ca-certificates \
         curl \
+        fzf \
         neovim \
+        ripgrep \
         tmux \
         zsh
 rm -rf /var/lib/apt/lists/*
