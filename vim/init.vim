@@ -86,6 +86,13 @@ let g:airline#extensions#whitespace#enabled = 0
 let g:airline_powerline_fonts = exists('g:nmk_256color')
 let g:ctrlp_cache_dir = s:cache_dir."/ctrlp"
 let g:ctrlp_custom_ignore = {'file': '\v\.(pyc)$'}
+let g:ctrlp_user_command = {
+    \ 'types': {
+      \ 1: ['.git', 'cd %s && git ls-files . -co --exclude-standard'],
+      \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+      \ },
+    \ 'fallback': 'find %s -type f'
+    \ }
 let g:jellybeans_overrides = {'Comment': {'attr': ''}, 'DiffChange': {'guifg': 'E0FFFF', 'guibg': '2B5B77'}}
 let g:jellybeans_use_term_background_color = 1
 let g:syntastic_quiet_messages = {'!level':  'errors'}
