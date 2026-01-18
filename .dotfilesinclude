@@ -10,6 +10,5 @@ zsh/plugins/zsh-completions/src/_openssl
 zsh/plugins/zsh-completions/src/_openvpn3
 zsh/plugins/zsh-completions/src/_pixz
 zsh/plugins/zsh-completions/src/_sbt
-zsh/plugins/zsh-completions/src/_tmuxinator
 zsh/plugins/zsh-completions/src/_wg-quick
 

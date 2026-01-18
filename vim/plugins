@@ -2,7 +2,6 @@
 # plugin_folder_name remote_repository
 
 ctrlp.vim           https://github.com/ctrlpvim/ctrlp.vim.git
-dockerfile.vim      https://github.com/ekalinin/Dockerfile.vim.git
 fzf                 https://github.com/junegunn/fzf.git
 fzf.vim             https://github.com/junegunn/fzf.vim.git
 jellybeans.vim      https://github.com/nanotech/jellybeans.vim.git
