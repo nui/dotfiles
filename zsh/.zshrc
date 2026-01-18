@@ -584,4 +584,8 @@ typeset -U path
         [[ -e $file ]] && source $file
     }
 }
+source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+bindkey '^ ' autosuggest-accept
+
 source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
