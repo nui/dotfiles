@@ -58,6 +58,8 @@ jobs:
       - name: Build and export docker image
         uses: docker/build-push-action@v6
         with:
+          build-args: |
+            CHANNEL=${{ github.ref_name }}
           context: docker
           file: docker/Dockerfile.dotfiles
           target: dotfiles-alpine
@@ -67,3 +69,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
+

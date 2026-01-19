@@ -1,12 +1,17 @@
+ARG CHANNEL=main
+
 FROM alpine AS dotfiles-alpine
 
+ARG CHANNEL
+
 RUN apk add --update curl tmux zsh neovim
+# Optional packages
 RUN apk add --update fzf ripgrep
 
 RUN <<'EOS'
 set -ex
 curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
-sh setup.sh -y --nbox
+sh setup.sh -y --nbox --channel=${CHANNEL}
 rm setup.sh
 for bin in nmk nmkup nbox; do
     ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
@@ -14,6 +19,8 @@ done
 EOS
 
 FROM ubuntu:24.04 AS dotfiles-ubuntu
+ARG CHANNEL
+
 RUN <<'EOS'
 set -ex
 export DEBIAN_FRONTEND=noninteractive
@@ -31,9 +38,10 @@ EOS
 RUN <<'EOS'
 set -ex
 curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
-sh setup.sh -y --nbox
+sh setup.sh -y --nbox --channel=${CHANNEL}
 rm setup.sh
 for bin in nmk nmkup nbox; do
     ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
 done
 EOS
+
