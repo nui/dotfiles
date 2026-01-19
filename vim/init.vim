@@ -101,7 +101,7 @@ let g:fzf_vim.command_prefix = 'Fzf'
 if executable('fzf')
     nnoremap <leader>rg :FzfRg<Space>
 else
-    nnoremap <silent><leader>rg :echo "error: fsf is not installed"<CR>
+    nnoremap <silent><leader>rg :echo "error: fzf is not installed"<CR>
 endif
 
 nnoremap <leader>nc :NERDTreeClose<CR>
