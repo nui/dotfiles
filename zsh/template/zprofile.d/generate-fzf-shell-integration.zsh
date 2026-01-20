@@ -17,7 +17,7 @@ export FZF_CTRL_R_COMMAND=$FZF_CTRL_R_COMMAND
 # >> Below lines are the output ofl "fzf --zsh"
 EOS
         fzf --zsh >> $script
-        print "# vi: ft=zsh" >> $script
+        print "# vi: set ft=zsh" >> $script
         fi
     }
 }
