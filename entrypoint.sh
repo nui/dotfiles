@@ -1,7 +1,8 @@
 # shellcheck shell=dash
 
-# This is a script that does launcher detection, inspects SSH_ORIGINAL_COMMAND then performs
-# any required initialization, if command is not specified, it will launch zsh shell if available.
+# This scipt performs launcher detection and inspects SSH_ORIGINAL_COMMAND
+# to carry out any required initialization.
+# If a command is not specified, it will launch the zsh shell, if available.
 #
 # Note:
 # - This script is used by "command" option inside authorized_keys file
@@ -15,11 +16,11 @@
 
 # -- begin prerequisites and fail-safe method -----------------------------------------------------
 if [ -n "$ZSH_VERSION" ]; then
-    # make zsh compatible with posix shell
+    # Make zsh compatible with posix shell
     emulate sh
 fi
 
-# Determine shell program that run script
+# Identify the shell program used to execute the script.
 SHELL_PROG=""
 if [ -n "$BASH_VERSION" ]; then
     SHELL_PROG=bash
@@ -38,11 +39,11 @@ pre_start() {
     if [ -n "${SSH_ORIGINAL_COMMAND+set}" ]; then
         _cmd="$SSH_ORIGINAL_COMMAND"
 
-        # downgrade SSH_ORIGINAL_COMMAND to a normal variable
+        # do not expose SSH_ORIGINAL_COMMAND to child process
         unset SSH_ORIGINAL_COMMAND
         SSH_ORIGINAL_COMMAND="$_cmd"
 
-        # Immediately execute command if starts with '\'
+        # Immediately execute the command if starts with '\'
         # It is a fail-safe mechanism in case if there is something wrong with actual script body
         # or self updating corruption
         if [ "${_cmd#\\}" != "$_cmd" ]; then
