@@ -119,7 +119,7 @@ alias help=run-help
 
     if ((${+commands[lsd]})); then
         ls_options+=(--group-dirs first)
-        if ! [[ $NMK_DEVELOPMENT = true ]]; then
+        if ! (( ${NMK_DEV:-0} )); then
             ls_options+=(--config-file '$NMK_HOME/lsd/config.yaml')
         fi
         if [[ $TERMINAL_EMULATOR = JetBrains-JediTerm ]]; then
@@ -363,9 +363,9 @@ fi
         # Don't display git branch symbol if terminal does not support 256 colors
         [[ -n $TERM ]] && (( ${+commands[tput]} )) && (( $(command tput colors) < 256 )) && horizontal_branch_symbol=
 
-        # Hide user and host in prompt if NMK_DEVELOPMENT is true by default,
+        # Hide user and host in prompt if NMK_DEV is set to 1
         # this is not apply to zsh in ssh session and shell running in devcontainer
-        [[ $NMK_DEVELOPMENT == true && -z $SSH_TTY && $REMOTE_CONTAINERS != true ]] && {
+        (( ${NMK_DEV:-0} )) && [[ -z $SSH_TTY && $REMOTE_CONTAINERS != true ]] && {
             if (( horizontal[show_user_and_host] == -1 )) && {
                 horizontal[show_user_and_host]=0
             }

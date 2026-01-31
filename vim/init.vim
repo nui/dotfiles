@@ -74,7 +74,7 @@ else
 endif
 
 " Turn mouse off on server
-let &mouse = ($NMK_DEVELOPMENT == 'true') ? 'a' : ''
+let &mouse = ($NMK_DEV == '1') ? 'a' : ''
 " }}}
 
 " Plugin settings --------------------------------------------------------- {{{

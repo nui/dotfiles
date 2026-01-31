@@ -73,7 +73,7 @@ Log out and log back in.
 # Mark this computer as a development machine
 #  - user@host will not be shown on zsh prompt
 #  - run development tools without warning
-NMK_DEVELOPMENT=[true|false]
+NMK_DEV=[1|0]
 ```
 
 

@@ -8,9 +8,9 @@
         # Don't display git branch symbol if terminal does not support 256 colors
         [[ -n $TERM ]] && (( ${+commands[tput]} )) && (( $(command tput colors) < 256 )) && horizontal_branch_symbol=
 
-        # Hide user and host in prompt if NMK_DEVELOPMENT is true by default,
+        # Hide user and host in prompt if NMK_DEV is set to 1
         # this is not apply to zsh in ssh session and shell running in devcontainer
-        [[ $NMK_DEVELOPMENT == true && -z $SSH_TTY && $REMOTE_CONTAINERS != true ]] && {
+        (( ${NMK_DEV:-0} )) && [[ -z $SSH_TTY && $REMOTE_CONTAINERS != true ]] && {
             if (( horizontal[show_user_and_host] == -1 )) && {
                 horizontal[show_user_and_host]=0
             }

@@ -1,5 +1,5 @@
 export EDITOR=nvim
-export NMK_DEVELOPMENT=true
+export NMK_DEV=1
 
 
 case $OSTYPE in
