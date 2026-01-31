@@ -9,7 +9,8 @@ nmk.toml
 .tmux_history
 /.cache/
 /conf/
-/vendor
+/local/
+/vendor/
 /vim/NERDTreeBookmarks
 /vim/bundle/
 /vim/local.vim
