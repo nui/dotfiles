@@ -14,7 +14,7 @@
 # Disable Ctrl-R integration by default
 export FZF_CTRL_R_COMMAND=$FZF_CTRL_R_COMMAND
 #
-# >> Below lines are the output ofl "fzf --zsh"
+# >> Below lines are the output of "fzf --zsh"
 EOS
         fzf --zsh >> $script
         print "# vi: set ft=zsh" >> $script
