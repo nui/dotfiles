@@ -118,3 +118,4 @@ _nmk_preexec() {
 
 add-zsh-hook precmd  _nmk_precmd
 add-zsh-hook preexec _nmk_preexec
+

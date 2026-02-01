@@ -4,3 +4,4 @@ if [[ -n $TMUX ]] && [[ -n $KUBERNETES_PORT ]]; then
         tmux detach-client -aP
     }
 fi
+

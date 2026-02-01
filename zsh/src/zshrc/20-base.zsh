@@ -20,3 +20,4 @@ stty -ixon # vim in remote ssh connection need this
 HISTFILE="${HISTFILE:-${ZDOTDIR}/.zsh_history}"
 HISTSIZE=5000
 SAVEHIST=$HISTSIZE
+

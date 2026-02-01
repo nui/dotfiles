@@ -1,7 +1,7 @@
 # Initialize required variables if not start from our launcher
 #
 # NMK_LAUNCHER_PATH is set by the launcher
-if [[ ! -e $NMK_LAUNCHER_PATH ]]; then
+if [[ -z $NMK_LAUNCHER_PATH ]]; then
     # This block is reachable because the launcher has never been run
     #
     # we setup minimum required variables of dotfiles project
