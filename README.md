@@ -25,7 +25,7 @@ if gpg --batch --yes -o nmkup-init.sh nmkup-init.sh.asc; then sh nmkup-init.sh; 
 
 ## Development note
 The generated zsh configuration files are not commited to git history. In order to automatically generate them, use following options
-- use git hooks by setting `git config core.hooksPath githooks`
+- use git hooks by setting `git config core.hooksPath .githooks`
 - run `zsh/watchexec-merge.sh`
 
 ## Directory structure

@@ -105,12 +105,12 @@ def generate_more_files(workdir):
     subprocess.run(create_list_files, shell=True, cwd=workdir)
     # unset write permission to get warning message on update read-only files
     subprocess.run('find . -type f -exec chmod ugo-w {} +', shell=True, cwd=workdir)
-    # However, template files should have write permission, for ease of copying and edit
+    # However, template files should have write permission, for ease of copying and editing
     subprocess.run('find zsh/template -type f -exec chmod u+w {} +', shell=True, cwd=workdir)
 
 
-def githooks(workdir):
-    subprocess.run('githooks/merge-zsh-config', shell=False, cwd=workdir)
+def merge_zsh_config(workdir):
+    subprocess.run('.githooks/merge-zsh-config', shell=False, cwd=workdir)
 
 
 def delete_unwanted_files(repo):
@@ -264,7 +264,7 @@ def main():
 
     repo = clone_repo(args.branch)
     clone_vim_plugins(repo)
-    githooks(repo)
+    merge_zsh_config(repo)
     generate_buildinfo(repo)
 
     tmp_dir = delete_unwanted_files(repo)

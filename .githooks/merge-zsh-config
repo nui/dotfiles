@@ -1,7 +1,7 @@
 #!/bin/sh
 # shellcheck shell=dash
 
-# We assume that this script is run from the root of working directory
+# This script assume that the current working directory is set to git working directory
 
 set -e
 

@@ -25,11 +25,11 @@ zsh/plugins/zsh-syntax-highlighting/images/
 zsh/plugins/zsh-syntax-highlighting/tests/
 zsh/watchexec-merge.sh
 # our directories
+.githooks
 .github
 docker
 etc/macos
 etc/ssh
-githooks
 nmk
 src
 zsh/src
