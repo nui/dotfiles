@@ -1,6 +1,14 @@
 #!/bin/zsh
 
-cd ${0:a:h}
+set -e
 
-watchexec -f 'src/zprofile/*.zsh' 'cat src/zprofile/*.zsh > .zprofile.merged.zsh' &
-watchexec -f 'src/zshrc/*.zsh' 'cat src/zshrc/*.zsh > .zshrc'
+GIT_ROOT_DIR="$(git rev-parse --show-toplevel)"
+
+(
+    cd $GIT_ROOT_DIR
+    watchexec --shell=none \
+        -f 'zsh/src/zprofile/*.zsh' \
+        -f 'zsh/src/zshrc/*.zsh' \
+        .githooks/merge-zsh-config
+)
+
