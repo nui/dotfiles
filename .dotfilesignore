@@ -29,6 +29,7 @@ zsh/watchexec-merge.sh
 docker
 etc/macos
 etc/ssh
+githooks
 nmk
 src
 zsh/src

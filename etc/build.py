@@ -109,6 +109,10 @@ def generate_more_files(workdir):
     subprocess.run('find zsh/template -type f -exec chmod u+w {} +', shell=True, cwd=workdir)
 
 
+def githooks(workdir):
+    subprocess.run('githooks/merge-zsh-config', shell=False, cwd=workdir)
+
+
 def delete_unwanted_files(repo):
     (_, archive_path) = tempfile.mkstemp('.tar')
     os.remove(archive_path)
@@ -260,6 +264,7 @@ def main():
 
     repo = clone_repo(args.branch)
     clone_vim_plugins(repo)
+    githooks(repo)
     generate_buildinfo(repo)
 
     tmp_dir = delete_unwanted_files(repo)

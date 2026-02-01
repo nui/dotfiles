@@ -23,37 +23,18 @@ if gpg --batch --yes -o nmkup-init.sh nmkup-init.sh.asc; then sh nmkup-init.sh; 
 ~/.nmk/login.sh
 ```
 
+## Development note
+The generated zsh configuration files are not commited to git history. In order to automatically generate them, use following options
+- use git hooks by setting `git config core.hooksPath githooks`
+- run `zsh/watchexec-merge.sh`
+
 ## Directory structure
 ```
-- bin    # Utility shell scripts
+- bin    # Reserved directory for the launcher and updater
+- devbin # Utility scripts
 - vim    # Vim configuration
 - zsh    # Zsh configuration
 ```
-
-## Tmux navigation
-```
-F1 -> Next pane
-F2 -> Last window
-F3 -> Previous window
-F4 -> Next window
-F5 -> Zoom pane
-F6 -> Choose tree
-
-Shift+Fx  -> Function key
-F12 Fx    -> Function key
-
-F12 F12   -> detach
-F12 (1-9) -> Select window number x
-```
-
-
-## Terminal setup
-To use 256 colors, Set `TERM` environment variable to `xterm-256color`.
-
-**Konsole** (KDE Terminal):
-- Right click and choose `Edit Current Profiles`
-- Click edit button next to environment label
-- Change `TERM=xterm` to `TERM=xterm-256color`
 
 
 ## zsh outside tmux
