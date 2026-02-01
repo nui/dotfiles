@@ -31,6 +31,7 @@ The generated zsh configuration files are not commited to git history. In order 
 ## Directory structure
 ```
 - bin    # Reserved directory for the launcher and updater
+- config # Custom $HOME/.config
 - devbin # Utility scripts
 - vim    # Vim configuration
 - zsh    # Zsh configuration

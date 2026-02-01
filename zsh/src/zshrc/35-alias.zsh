@@ -24,7 +24,7 @@ alias help=run-help
     if ((${+commands[lsd]})); then
         ls_options+=(--group-dirs first)
         if ! (( ${NMK_DEV:-0} )); then
-            ls_options+=(--config-file '$NMK_HOME/lsd/config.yaml')
+            ls_options+=(--config-file '$NMK_HOME/config/lsd/config.yaml')
         fi
         if [[ $TERMINAL_EMULATOR = JetBrains-JediTerm ]]; then
             color="--color=never"
