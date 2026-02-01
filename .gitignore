@@ -18,8 +18,10 @@ nmk.toml
 /vim/viminfo
 /zsh/.zcompcache/
 /zsh/.zcompdump
+/zsh/.zprofile.merged.zsh
 /zsh/.zsh_history
 /zsh/.zsh_sessions/
+/zsh/.zshrc
 /zsh/completion/
 /zsh/histories/
 /zsh/local/

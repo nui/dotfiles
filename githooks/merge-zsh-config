@@ -1,0 +1,10 @@
+#!/bin/sh
+# shellcheck shell=dash
+
+# We assume that this script is run from the root of working directory
+
+set -e
+
+cat zsh/src/zshrc/*.zsh > zsh/.zshrc
+cat zsh/src/zprofile/*.zsh > zsh/.zprofile.merged.zsh
+
