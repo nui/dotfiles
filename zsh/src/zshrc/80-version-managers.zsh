@@ -4,11 +4,10 @@
     # Detect jenv
     (( ${+commands[jenv]} )) && managers+=(jenv)
     # Detect nvm
-    # nvm recommends git checkout not brew
-    export NVM_DIR=${NVM_DIR:-$HOME/.nvm}
-    [[ -e $NVM_DIR/nvm.sh ]] && {
+    [[ -e ${NVM_DIR:-~/.nvm}/nvm.sh ]] && {
         managers+=(nvm)
         function init-nvm {
+            export NVM_DIR=${NVM_DIR:-~/.nvm}
             local cmd
             cmd='source $NVM_DIR/nvm.sh'
             # avoid calling `nvm use` again
