@@ -28,11 +28,10 @@ zstyle ':completion:*:(ssh|scp|sftp):*' hosts off
         /usr/share/zsh/vendor-completions
         $NMK_HOME/vendor/completion
     )
-    # Try to add completion directories to fpath
-    # if $fp not in $fpath and $fp does exists
+    # Add completion directories to $fpath if $fp is not present in the array and it does exist
     local fp
     for fp in $completion_dir; do
-        if [[ ${fpath[(ie)$fp]} -gt ${#fpath} && -d $fp ]]; then
+        if [[ ${fpath[(Ie)$fp]} -eq 0 && -d $fp ]]; then
             fpath+=$fp
         fi
     done

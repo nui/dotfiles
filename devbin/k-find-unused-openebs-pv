@@ -28,7 +28,7 @@ print -l $all
 unused=()
 
 for pv in $all; do
-    if ! (( $used[(Ie)$pv] )); then
+    if [[ ${used[(Ie)$pv]} -eq 0 ]]; then
         # print
         echo $pv
         unused+=($pv)
