@@ -87,6 +87,11 @@ autoload -Uz use-gpg-ssh-agent
     alias vi='env -u VIMINIT vi'
 }
 
+(( ${+commands[jq]} )) && {
+    autoload -Uz jshape
+}
+
+
 (( ${+commands[kubectl]} )) && {
     autoload -Uz k-node-shutdown-cleanup
     alias k-freepv="kubectl patch pv -p '{\"spec\":{\"claimRef\": null}}'"

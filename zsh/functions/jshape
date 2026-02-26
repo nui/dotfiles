@@ -1,0 +1,12 @@
+jq '
+def shape:
+  if type == "array" then
+    if length > 0 then [ (.[0] | shape) ] else [] end
+  elif type == "object" then
+    with_entries(.value |= shape)
+  else
+    type
+  end;
+shape
+' $@
+# vi: ft=zsh
