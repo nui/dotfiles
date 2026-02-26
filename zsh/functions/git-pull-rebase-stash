@@ -1,0 +1,6 @@
+set -x
+git fetch \
+    && git stash -u \
+    && git rebase '@{upstream}' \
+    && git stash pop
+# vi: ft=zsh

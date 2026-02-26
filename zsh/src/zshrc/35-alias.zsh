@@ -64,6 +64,7 @@ autoload -Uz use-gpg-ssh-agent
 # Productive Git aliases and functions
 (( ${+commands[git]} )) && {
     autoload -Uz git-reset-to-remote-branch
+    autoload -Uz git-pull-rebase-stash
     autoload -Uz grst
     alias gco=' git checkout'
     alias gd=' git diff'
@@ -73,7 +74,7 @@ autoload -Uz use-gpg-ssh-agent
     # Use alternate screen in git log
     alias lol=" git log --oneline --decorate --graph --color=auto"
     alias gpr=' git pull --rebase'
-    alias gprs=' git stash && git pull --rebase && git stash pop'
+    alias gprs='git-pull-rebase-stash'
     alias grrb=' git-reset-to-remote-branch'
 }
 
