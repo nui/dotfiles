@@ -1,6 +1,7 @@
 set -x
+# git fetch is used to check authorization
 git fetch \
     && git stash -u \
-    && git rebase '@{upstream}' \
+    && git pull --rebase \
     && git stash pop
 # vi: ft=zsh
