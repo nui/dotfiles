@@ -50,9 +50,9 @@ function {
     #
     #   zsh -lic "echo -n $UUID; cat /proc/self/environ; echo -n $UUID"
     #
-    # $UUID is a random uuid
+    # $UUID is a random uuid (e.g., a63a9f8b-9ab7-4f52-937c-40017839b3ac)
     #
-    # it may use -lic, -lc or -ic, depends on userEnvProbe value
+    # it may use -lic, -lc or -ic, depends on userEnvProbe setting
     #
     # There is no guarantee that vscode will always use this format
     # However, it is very unlikely to be changed
