@@ -11,9 +11,9 @@ RUN apk add --update fzf ripgrep
 RUN <<'EOS'
 set -ex
 curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
-sh setup.sh -y --nbox --channel=${CHANNEL}
+sh setup.sh -y --nbox --rxsh --channel=${CHANNEL}
 rm setup.sh
-for bin in nmk nmkup nbox; do
+for bin in nmk nmkup nbox rxsh; do
     ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
 done
 EOS
@@ -38,9 +38,9 @@ EOS
 RUN <<'EOS'
 set -ex
 curl -o setup.sh --proto '=https' --tlsv1.2 -sSf https://nmkup.nuimk.com
-sh setup.sh -y --nbox --channel=${CHANNEL}
+sh setup.sh -y --nbox --rxsh --channel=${CHANNEL}
 rm setup.sh
-for bin in nmk nmkup nbox; do
+for bin in nmk nmkup nbox rxsh; do
     ln -sf /root/.nmk/bin/$bin   /usr/local/bin/$bin
 done
 EOS
