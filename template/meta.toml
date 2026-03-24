@@ -44,6 +44,11 @@ lua = { file = "lua/no-commented-line.lua" }
 clipboard = true
 
 [[templates]]
+name = "rke2 openebs"
+file = "files/rke2-openebs.sh"
+language = "sh"
+
+[[templates]]
 name = "Docker daemon.json"
 file = "files/daemon.json"
 language = "json"
