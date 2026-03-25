@@ -5,13 +5,14 @@
 # We have to delete all pods on that node and rejoin the cluster
 
 
-# Step 1: drain all pod from node
+# Step 1: drain all pods from node and delete node
 kubectl drain --ignore-daemonsets --delete-emptydir-data tempest
+kubectl delete node tempest
 
 # Step 2: stop rke2-agent on target node and reboot
 systemctl disable rke2-agent
 reboot
-# after reboot
+# remove all remaining pods
 rm -rf /var/lib/kubelet/pods/*
 systemctl enable --now rke2-agent
 
