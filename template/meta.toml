@@ -31,17 +31,22 @@ language = "sh"
 clipboard = true
 
 [[templates]]
+name = "k8s proxy"
+file = "files/k8s-proxy.sh"
+language = "sh"
+
+[[templates]]
 name = "k8s statefulset"
 file = "files/k8s-statefulset.yml"
 language = "yaml"
 lua = { file = "lua/k8s.lua" }
 
-[[templates]]
-name = "k8s dashboard"
-file = "files/k8s-dashboard.sh"
-language = "sh"
-lua = { file = "lua/no-commented-line.lua" }
-clipboard = true
+# [[templates]]
+# name = "k8s dashboard"
+# file = "files/k8s-dashboard.sh"
+# language = "sh"
+# lua = { file = "lua/no-commented-line.lua" }
+# clipboard = true
 
 [[templates]]
 name = "rke2 openebs"
