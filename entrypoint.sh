@@ -100,11 +100,11 @@ execute_command() {
     _cmd="$SSH_ORIGINAL_COMMAND"
     case "$_cmd" in
         # If command is our binary, prepend its parent directory to PATH right before execution
-        nmk | nmkup | nbox )
+        nmk | nmkup | nbox | rxsh )
             prepend_bin_dir_to_path
             exec "$_cmd"
             ;;
-        nmk[[:space:]]* | nmkup[[:space:]]* | nbox[[:space:]]* )
+        nmk[[:space:]]* | nmkup[[:space:]]* | nbox[[:space:]]* | rxsh[[:space:]]*)
             prepend_bin_dir_to_path
             # shellcheck disable=SC2086
             exec "$SHELL_PROG" $SHELL_OPTS -c "$_cmd"
