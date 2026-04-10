@@ -10,8 +10,8 @@ output = "compose.yml"
 language = "yaml"
 
 [[templates]]
-name = "docker quickfix"
-file = "files/docker.sh"
+name = "buildx quickfix"
+file = "files/docker-buildx.sh"
 language = "sh"
 
 [[templates]]
@@ -41,22 +41,10 @@ file = "files/k8s-statefulset.yml"
 language = "yaml"
 lua = { file = "lua/k8s.lua" }
 
-# [[templates]]
-# name = "k8s dashboard"
-# file = "files/k8s-dashboard.sh"
-# language = "sh"
-# lua = { file = "lua/no-commented-line.lua" }
-# clipboard = true
-
 [[templates]]
-name = "rke2 openebs"
+name = "RKE2 openebs"
 file = "files/rke2-openebs.sh"
 language = "sh"
-
-[[templates]]
-name = "Docker daemon.json"
-file = "files/daemon.json"
-language = "json"
 
 [[templates]]
 name = "LVM"
