@@ -1,0 +1,21 @@
+[[templates]]
+name = "compose.yml"
+file = "compose.yml"
+output = "compose.yml"
+language = "yaml"
+
+[[templates]]
+name = "Dockerfile - ubuntu"
+file = "Dockerfile.ubuntu"
+language = "Dockerfile"
+
+[[templates]]
+name = "nginx"
+file = "default.conf"
+language = "nginx"
+
+[[templates]]
+name = "k8s statefulset"
+file = "k8s-statefulset.yml"
+language = "yaml"
+lua = { file = "../lua/k8s.lua" }

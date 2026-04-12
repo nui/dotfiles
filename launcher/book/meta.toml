@@ -1,0 +1,31 @@
+[[books]]
+name = "Cargo"
+file = "cargo.sh"
+language = "sh"
+
+[[books]]
+name = "buildx quickfix"
+file = "docker-buildx.sh"
+language = "sh"
+
+[[books]]
+name = "Apt proxy"
+file = "apt.conf"
+language = "sh"
+clipboard = true
+
+[[books]]
+name = "k8s proxy"
+file = "k8s-proxy.sh"
+language = "sh"
+
+[[books]]
+name = "RKE2 openebs"
+file = "rke2-openebs.sh"
+language = "sh"
+
+[[books]]
+name = "LVM"
+file = "lvm.sh"
+language = "sh"
+
