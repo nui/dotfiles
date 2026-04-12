@@ -4,6 +4,21 @@ file = "cargo.sh"
 language = "sh"
 
 [[books]]
+name = "conda & jupyter"
+file = "conda.sh"
+language = "sh"
+
+[[books]]
+name = "openvpn"
+file = "openvpn.sh"
+language = "sh"
+
+[[books]]
+name = "findmnt"
+file = "findmnt.sh"
+language = "sh"
+
+[[books]]
 name = "buildx quickfix"
 file = "docker-buildx.sh"
 language = "sh"
