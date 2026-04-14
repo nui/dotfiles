@@ -1,0 +1,60 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: appname
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`appname.nuimk.com`) && PathPrefix("/")
+      middlewares:
+        - name: appname-allow-ip
+        - name: appname-buffering
+      services:
+        - name: appname
+          port: http
+    - kind: Rule
+      match: Host(`appname.nuimk.com`) && PathPrefix("/auth")
+      middlewares:
+        - name: appname-allow-ip
+        - name: appname-buffering
+      services:
+        - name: appname
+          port: auth
+          # If self-signed certificate is being used
+          # serversTransport: proxmox
+          # scheme: https
+  tls:
+    secretName: nuimk-dot-com-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: appname-allow-ip
+  namespace: default
+spec:
+  ipAllowList:
+    sourceRange:
+      - 10.8.2.0/24
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: appname-buffering
+  namespace: default
+spec:
+  buffering:
+    maxRequestBodyBytes: 500000000
+# ---
+# apiVersion: traefik.io/v1alpha1
+# kind: ServersTransport
+# metadata:
+#   name: appname
+#   namespace: default
+# spec:
+#   serverName: web.app.com
+#   insecureSkipVerify: true

@@ -19,3 +19,8 @@ name = "k8s statefulset"
 file = "k8s-statefulset.yml"
 language = "yaml"
 lua = { file = "../lua/k8s.lua" }
+
+[[templates]]
+name = "k8s ingress-route.yaml"
+file = "ingress-route.yaml"
+language = "yaml"
