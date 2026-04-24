@@ -44,3 +44,8 @@ name = "LVM"
 file = "lvm.sh"
 language = "sh"
 
+[[books]]
+name = "sealedsecret"
+file = "sealedsecret.sh"
+language = "sh"
+
