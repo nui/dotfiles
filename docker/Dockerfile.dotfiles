@@ -4,7 +4,12 @@ FROM alpine AS dotfiles-alpine
 
 ARG CHANNEL
 
-RUN apk add --update curl tmux zsh neovim
+RUN <<'EOS'
+# required
+apk add --update curl tmux zsh neovim
+# make timezone work properly
+apk add tzdata
+EOS
 # Optional packages
 RUN apk add --update fzf ripgrep
 
