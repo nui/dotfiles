@@ -49,3 +49,7 @@ name = "sealedsecret"
 file = "sealedsecret.sh"
 language = "sh"
 
+[[books]]
+name = "traefik"
+file = "traefik.sh"
+language = "sh"
