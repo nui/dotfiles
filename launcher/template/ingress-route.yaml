@@ -10,11 +10,13 @@ spec:
     - websecure
   # See https://doc.traefik.io/traefik/reference/routing-configuration/http/routing/rules-and-priority/
   routes:
+    # router with higher priority is more important
     - kind: Rule
-      match: Host(`appname.nuimk.com`) && PathPrefix(`/`)
+      match: Host(`appname.nuimk.com`)
       middlewares:
         - name: appname-allow-ip
         - name: appname-buffering
+      priority: 0 # 0 means priority is calculated by rules length, in this case, length of `match` value, which is 25
       services:
         - name: appname
           port: http
