@@ -8,9 +8,10 @@ metadata:
 spec:
   entryPoints:
     - websecure
+  # See https://doc.traefik.io/traefik/reference/routing-configuration/http/routing/rules-and-priority/
   routes:
     - kind: Rule
-      match: Host(`appname.nuimk.com`) && PathPrefix("/")
+      match: Host(`appname.nuimk.com`) && PathPrefix(`/`)
       middlewares:
         - name: appname-allow-ip
         - name: appname-buffering
@@ -18,7 +19,7 @@ spec:
         - name: appname
           port: http
     - kind: Rule
-      match: Host(`appname.nuimk.com`) && PathPrefix("/auth")
+      match: Host(`appname.nuimk.com`) && PathPrefix(`/auth`)
       middlewares:
         - name: appname-allow-ip
         - name: appname-buffering
