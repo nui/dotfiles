@@ -40,6 +40,11 @@ file = "rke2-openebs.sh"
 language = "sh"
 
 [[books]]
+name = "RKE2 user namespace"
+file = "rke2-userns.sh"
+language = "sh"
+
+[[books]]
 name = "LVM"
 file = "lvm.sh"
 language = "sh"
