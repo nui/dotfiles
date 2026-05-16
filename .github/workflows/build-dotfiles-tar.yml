@@ -42,10 +42,24 @@ jobs:
           BINARY_SIGNING_KEY: ${{ secrets.BINARY_SIGNING_KEY }}
         run: |
           set -ex
-          files=(dotfiles.tar.xz dotfiles.tar.xz.sha256)
+          files=(dotfiles.tar.xz)
           cd dist
+          json_template=$(cat <<'EOF'
+          {
+            "name": $name,
+            "signature": $signature
+          }
+          EOF
+          )
           for file in ${files[@]}; do
-            nmk ed25519 sign --key-env BINARY_SIGNING_KEY --file $file --output ${file}.sig
+            sig_file=${file}.sig
+            nmk ed25519 sign --key-env BINARY_SIGNING_KEY --file "$file" --output "$sig_file"
+            signature=$(base64 -w 0 < "$sig_file")
+            jq -n \
+              --arg name "$file" \
+              --arg signature "$signature" \
+              "$json_template" > "${file}".meta.json
+            rm -f "$sig_file"
           done
       - name: Final artifact summary
         run: |
@@ -70,3 +84,16 @@ jobs:
           gzip: true
           destination: 'nmk.nuimk.com/channels/${{ env.C_BRANCH_NAME }}'
           process_gcloudignore: false
+      - name: Upload to cloudflare R2
+        uses: docker://amazon/aws-cli
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.CF_R2_NMK_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CF_R2_NMK_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ vars.CF_R2_S3_API }}
+          AWS_DEFAULT_REGION: auto
+          SCRIPT: |-
+            set -ex
+            aws s3 cp dist/ s3://nmk/channels/${{ env.C_BRANCH_NAME}}/ --recursive --include '*'
+        with:
+          entrypoint: "/bin/sh"
+          args: -c "eval \"$SCRIPT\""
