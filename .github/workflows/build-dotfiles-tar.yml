@@ -70,20 +70,20 @@ jobs:
             ls -lh dist
             echo '```'
           ) >> "$GITHUB_STEP_SUMMARY"
-      - name: "Authenticate to google cloud"
-        id: 'auth'
-        uses: 'google-github-actions/auth@v3'
-        with:
-          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ vars.SERVICE_ACCOUNT }}
-      - name: 'Upload to public bucket'
-        uses: 'google-github-actions/upload-cloud-storage@v3'
-        with:
-          path: dist
-          parent: false
-          gzip: true
-          destination: 'nmk.nuimk.com/channels/${{ env.C_BRANCH_NAME }}'
-          process_gcloudignore: false
+      # - name: "Authenticate to google cloud"
+      #   id: 'auth'
+      #   uses: 'google-github-actions/auth@v3'
+      #   with:
+      #     workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+      #     service_account: ${{ vars.SERVICE_ACCOUNT }}
+      # - name: 'Upload to public bucket'
+      #   uses: 'google-github-actions/upload-cloud-storage@v3'
+      #   with:
+      #     path: dist
+      #     parent: false
+      #     gzip: true
+      #     destination: 'nmk.nuimk.com/channels/${{ env.C_BRANCH_NAME }}'
+      #     process_gcloudignore: false
       - name: Upload to cloudflare R2
         uses: docker://amazon/aws-cli
         env:
