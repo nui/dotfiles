@@ -70,6 +70,35 @@ jobs:
             ls -lh dist
             echo '```'
           ) >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload to cloudflare R2
+        uses: docker://amazon/aws-cli
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.CF_R2_NMK_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CF_R2_NMK_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ vars.CF_R2_S3_API }}
+          AWS_DEFAULT_REGION: auto
+          SCRIPT: |-
+            set -ex
+            aws s3 cp dist/ s3://nmk/channels/${{ env.C_BRANCH_NAME}}/ --recursive --include '*'
+        with:
+          entrypoint: "/bin/sh"
+          args: -c "eval \"$SCRIPT\""
+      - name: Purge cloudflare cache
+        env:
+          ZONE_ID: ${{ vars.CF_NUIMK_COM_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_NUIMK_DOT_COM_API_TOKEN }}
+        run: |
+          set -x
+          request_body=$(
+            jq -n \
+              --arg prefix "nmk-files.nuimk.com/channels/${{ env.C_BRANCH_NAME}}/dotfiles" \
+              '{"prefixes":[$prefix]}'
+            )
+          # perge cache by prefixes
+          curl https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache \
+              -H 'Content-Type: application/json' \
+              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              -d "$request_body"
       # - name: "Authenticate to google cloud"
       #   id: 'auth'
       #   uses: 'google-github-actions/auth@v3'
@@ -84,16 +113,3 @@ jobs:
       #     gzip: true
       #     destination: 'nmk.nuimk.com/channels/${{ env.C_BRANCH_NAME }}'
       #     process_gcloudignore: false
-      - name: Upload to cloudflare R2
-        uses: docker://amazon/aws-cli
-        env:
-          AWS_ACCESS_KEY_ID: ${{ vars.CF_R2_NMK_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.CF_R2_NMK_SECRET_ACCESS_KEY }}
-          AWS_ENDPOINT_URL: ${{ vars.CF_R2_S3_API }}
-          AWS_DEFAULT_REGION: auto
-          SCRIPT: |-
-            set -ex
-            aws s3 cp dist/ s3://nmk/channels/${{ env.C_BRANCH_NAME}}/ --recursive --include '*'
-        with:
-          entrypoint: "/bin/sh"
-          args: -c "eval \"$SCRIPT\""
