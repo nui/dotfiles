@@ -42,10 +42,24 @@ jobs:
           BINARY_SIGNING_KEY: ${{ secrets.BINARY_SIGNING_KEY }}
         run: |
           set -ex
-          files=(dotfiles.tar.xz dotfiles.tar.xz.sha256)
+          files=(dotfiles.tar.xz)
           cd dist
+          json_template=$(cat <<'EOF'
+          {
+            "name": $name,
+            "signature": $signature
+          }
+          EOF
+          )
           for file in ${files[@]}; do
-            nmk ed25519 sign --key-env BINARY_SIGNING_KEY --file $file --output ${file}.sig
+            sig_file=${file}.sig
+            nmk ed25519 sign --key-env BINARY_SIGNING_KEY --file "$file" --output "$sig_file"
+            signature=$(base64 -w 0 < "$sig_file")
+            jq -n \
+              --arg name "$file" \
+              --arg signature "$signature" \
+              "$json_template" > "${file}".meta.json
+            rm -f "$sig_file"
           done
       - name: Final artifact summary
         run: |
