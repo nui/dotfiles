@@ -6,6 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get -yq --no-install-recommends install \
         curl \
         git \
+        jq \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
