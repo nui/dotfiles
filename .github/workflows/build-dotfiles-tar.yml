@@ -84,3 +84,16 @@ jobs:
           gzip: true
           destination: 'nmk.nuimk.com/channels/${{ env.C_BRANCH_NAME }}'
           process_gcloudignore: false
+      - name: Upload to cloudflare R2
+        uses: docker://amazon/aws-cli
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.CF_R2_NMK_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CF_R2_NMK_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ vars.CF_R2_S3_API }}
+          AWS_DEFAULT_REGION: auto
+          SCRIPT: |-
+            set -ex
+            aws s3 cp dist/ s3://nmk/channels/${{ env.C_BRANCH_NAME}}/ --recursive --include '*'
+        with:
+          entrypoint: "/bin/sh"
+          args: -c "eval \"$SCRIPT\""
