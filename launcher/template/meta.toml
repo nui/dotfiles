@@ -3,6 +3,9 @@ name = "compose.yml"
 file = "compose.yml"
 output = "compose.yml"
 language = "yaml"
+middlewares = [
+    { name = "text", args = ["random"] }
+]
 
 [[templates]]
 name = "Dockerfile - ubuntu"
@@ -20,11 +23,10 @@ file = "k8s-statefulset.yml"
 language = "yaml"
 middlewares = [
     { name = "text", args = ["no-comment"] },
-    # { name = "k8s" },
 ]
-
 
 [[templates]]
 name = "k8s ingress-route.yaml"
 file = "ingress-route.yaml"
 language = "yaml"
+
