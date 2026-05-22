@@ -18,7 +18,8 @@ language = "nginx"
 name = "k8s statefulset"
 file = "k8s-statefulset.yml"
 language = "yaml"
-middleware = { name = "k8s" }
+# middleware = { name = "k8s" }
+middleware = { name = "text", args = ["no-comment"] }
 
 [[templates]]
 name = "k8s ingress-route.yaml"
