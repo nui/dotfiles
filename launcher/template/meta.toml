@@ -4,7 +4,7 @@ file = "compose.yml"
 output = "compose.yml"
 language = "yaml"
 middlewares = [
-    { name = "text", args = ["random"] }
+    { name = "text", args = ["random", "-w"] }
 ]
 
 [[templates]]
