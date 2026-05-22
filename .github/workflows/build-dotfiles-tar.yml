@@ -47,16 +47,19 @@ jobs:
           json_template=$(cat <<'EOF'
           {
             "name": $name,
+            "github_ref_name": $github_ref_name,
             "signature": $signature
           }
           EOF
           )
+          github_ref_name=${GITHUB_REF_NAME}
           for file in ${files[@]}; do
             sig_file=${file}.sig
             nmk ed25519 sign --key-env BINARY_SIGNING_KEY --file "$file" --output "$sig_file"
             signature=$(base64 -w 0 < "$sig_file")
             jq -n \
               --arg name "$file" \
+              --arg github_ref_name "$github_ref_name" \
               --arg signature "$signature" \
               "$json_template" > "${file}".meta.json
             rm -f "$sig_file"
