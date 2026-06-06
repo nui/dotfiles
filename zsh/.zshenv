@@ -66,3 +66,7 @@ if [[ -e $ZDOTDIR/zshenv.extra ]]; then
     source $ZDOTDIR/zshenv.extra
 fi
 
+if [[ ! -e $ZDOTDIR/.zshrc ]]; then
+    echo >&2 ".zshrc file not found, Did you forget to run watchexec-merge.sh script?"
+fi
+
