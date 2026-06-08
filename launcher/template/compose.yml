@@ -1,7 +1,8 @@
-# See https://docs.docker.com/reference/compose-file
 name: project_name
 
+
 services:
+  # Full service spec at https://docs.docker.com/reference/compose-file/services
   postgres:
     image: postgres:17
     restart: always
@@ -13,5 +14,15 @@ services:
       POSTGRES_PASSWORD: _RANDOM_TOKEN_
     volumes:
       - db-data:/var/lib/postgresql/data
+  fluentbit:
+    image: cr.fluentbit.io/fluent/fluent-bit
+    command:
+      - -c
+      - /fluent-bit/etc/fluent-bit.yaml
+    volumes:
+      - type: bind
+        source: ./fluent-bit.yaml
+        target: /fluent-bit/etc/fluent-bit.yaml
 volumes:
   db-data:
+
