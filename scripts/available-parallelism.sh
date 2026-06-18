@@ -18,6 +18,7 @@ if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
     if [ -r "$cpu_max" ]; then
         read quota period < "$cpu_max"
         if [ "$quota" != "max" ]; then
+            # round up
             quota_cpus=$(( (quota + period - 1) / period ))
         fi
     fi
@@ -37,6 +38,7 @@ else
             period=$(cat "$period_file")
 
             if [ "$quota" -gt 0 ]; then
+                # round up
                 quota_cpus=$(( (quota + period - 1) / period ))
             fi
         fi
@@ -54,3 +56,4 @@ if [ -n "$quota_cpus" ] && [ "$quota_cpus" -lt "$affinity" ]; then
 else
     echo "$affinity"
 fi
+
