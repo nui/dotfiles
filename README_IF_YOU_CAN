@@ -1,0 +1,6 @@
+If you are reading this file, it is safe to remove the entire directory containing it (typically ~/.nmk).
+
+This directory is created by the https://github.com/nui/dotfiles repository.
+It contains my personal dotfiles and a few development binaries.
+
+It is *not* required for production use. The contents are provided solely for development, testing, and debugging purposes.
