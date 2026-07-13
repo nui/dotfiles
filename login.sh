@@ -46,7 +46,7 @@ main() {
         || locate_launcher "$(command -v nmk 2>/dev/null)" \
         || fallback_no_launcher
 
-    flags="--login"
+    flags="--try-login"
     # shellcheck disable=SC3028
     if [ -n "$SSH_CONNECTION" ] && [ "${SHLVL:-0}" = 0 ]; then
         flags="$flags --motd"

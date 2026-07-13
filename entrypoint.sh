@@ -143,7 +143,7 @@ main() {
     [ -n "$SSH_ORIGINAL_COMMAND" ] && execute_command
 
     # Default to start a login shell
-    exec "$LAUNCHER_PATH" --motd --login
+    exec "$LAUNCHER_PATH" --motd --try-login
 }
 
 # NOTE: we don't pass "$@" because this entrypoint should not be called with arguments
