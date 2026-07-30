@@ -11,7 +11,7 @@ apk add --update curl tmux zsh neovim
 apk add tzdata
 EOS
 # Optional packages
-RUN apk add --update fzf htop ripgrep
+RUN apk add --update fzf htop ripgrep tini
 
 RUN <<'EOS'
 set -ex
