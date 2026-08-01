@@ -92,6 +92,9 @@ autoload -Uz use-gpg-ssh-agent
     autoload -Uz jshape
 }
 
+(( ${+commands[k9s]} )) && [[ -n $TMUX && $TERM=tmux-256color ]] && {
+    alias k9s="TERM=xterm-256color k9s"
+}
 
 (( ${+commands[kubectl]} )) && {
     autoload -Uz k-node-shutdown-cleanup
