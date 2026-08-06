@@ -13,10 +13,10 @@ ZSH_DYNAMIC_COMPLETION_DIR=$ZDOTDIR/zshrc.clap-dynamic-completion.d
 (( ${+commands[nbox]} )) && nbox completions zsh -o "$ZSH_COMPLETE_DIR/_nbox"
 (( ${+commands[nmkup]} )) && {
     nmkup --write-zsh-completion "$ZSH_COMPLETE_DIR/_nmkup"
-    COMPLETE=zsh nmkup > $ZSH_DYNAMIC_COMPLETION_DIR/nmkup.zsh
+    NMK_CLAP_DYNAMIC_COMPLETE=zsh nmkup > $ZSH_DYNAMIC_COMPLETION_DIR/nmkup.zsh
 }
 (( ${+commands[nmk]} )) && {
     nmk completions zsh -o "$ZSH_COMPLETE_DIR/_nmk"
-    COMPLETE=zsh nmk > $ZSH_DYNAMIC_COMPLETION_DIR/nmk.zsh
+    NMK_CLAP_DYNAMIC_COMPLETE=zsh nmk > $ZSH_DYNAMIC_COMPLETION_DIR/nmk.zsh
 }
 
