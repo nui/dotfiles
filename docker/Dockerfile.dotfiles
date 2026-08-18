@@ -34,7 +34,9 @@ apt-get -yq upgrade
 apt-get -yq --no-install-recommends install \
         ca-certificates \
         curl \
+        htop \
         neovim \
+        tini \
         tmux \
         zsh
 rm -rf /var/lib/apt/lists/*
