@@ -10,3 +10,6 @@ GH_BRANCH      ?= $(CURRENT_BRANCH)
 alpine-image:
 	gh workflow run build-dotfiles-alpine-image.yml --ref $(GH_BRANCH)
 
+ubuntu-image:
+	gh workflow run build-dotfiles-ubuntu-image.yml --ref $(GH_BRANCH)
+
