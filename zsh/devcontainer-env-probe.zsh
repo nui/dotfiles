@@ -73,11 +73,19 @@ function {
     local -a cmd_with_args=(${(0)"$(</proc/self/cmdline)"})
 
     local launcher=${NMK_LAUNCHER_PATH:-$NMK_HOME/bin/nmk}
-    local global_launcher=/usr/local/bin/nmk
-    # Fix issue in devcontainer where the launcher is not compiled yet but there is a global launcher
-    if [[ ! -x $launcher && -x $global_launcher ]]; then
-        launcher=$global_launcher
+
+    # Fix an issue in devcontainer where the launcher is not compiled yet
+    if [[ ! -x $launcher ]]; then
+        local -a global_launcher
+        local p
+        for p ($(builtin where nmk)) {
+            if [[ -x $p ]]; then
+                launcher=$p
+                break
+            fi
+        }
     fi
+
     # if the launcher is found and executable bit is set, use it
     if [[ -x $launcher ]]; then
         # * --no-log is optional but we don't really need logging here
