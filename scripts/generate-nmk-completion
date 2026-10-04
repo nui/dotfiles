@@ -19,4 +19,5 @@ ZSH_DYNAMIC_COMPLETION_DIR=$ZDOTDIR/zshrc.clap-dynamic-completion.d
     nmk completions zsh -o "$ZSH_COMPLETE_DIR/_nmk"
     NMK_CLAP_DYNAMIC_COMPLETE=zsh nmk > $ZSH_DYNAMIC_COMPLETION_DIR/nmk.zsh
 }
+(( ${+commands[rxsh]} )) && rxsh completions zsh -o "$ZSH_COMPLETE_DIR/_rxsh"
 
