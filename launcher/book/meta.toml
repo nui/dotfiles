@@ -35,6 +35,11 @@ file = "k8s-proxy.sh"
 language = "sh"
 
 [[books]]
+name = "k8s Pod Security Standards"
+file = "k8s-pod-security-standard.sh"
+language = "sh"
+
+[[books]]
 name = "RKE2 openebs"
 file = "rke2-openebs.sh"
 language = "sh"
