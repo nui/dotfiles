@@ -10,3 +10,6 @@ lvcreate -s -n foo-snapshot vg-main/foo
 # Restore from snapshot
 lvconvert --merge vg-main/foo-snapshot
 
+# Discard snapshot
+lvremove vg-main/foo-snapshot
+
