@@ -18,3 +18,7 @@ openvpn3 config-import --config /path/to/config.ovpn --persistent --name NAME
 
 # Fix compression algorithm error
 openvpn3 config-manage --allow-compression yes  --config NAME
+
+# Fix Openvpn Connect on MacOS m4
+sudo launchctl load -w /Library/LaunchDaemons/org.openvpn.client.plist
+
