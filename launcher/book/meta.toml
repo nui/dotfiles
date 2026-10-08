@@ -9,9 +9,14 @@ file = "conda.sh"
 language = "sh"
 
 [[books]]
-name = "openvpn"
+name = "openvpn client"
 file = "openvpn.sh"
 language = "sh"
+
+[[books]]
+name = "openvpn config"
+file = "openvpn.ovpn"
+language = "sh" # this one make config readable
 
 [[books]]
 name = "findmnt"
