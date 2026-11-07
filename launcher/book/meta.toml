@@ -24,7 +24,7 @@ file = "findmnt.sh"
 language = "sh"
 
 [[books]]
-name = "buildx quickfix"
+name = "docker/buildx"
 file = "docker-buildx.sh"
 language = "sh"
 
