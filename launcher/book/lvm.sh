@@ -13,3 +13,8 @@ lvconvert --merge vg-main/foo-snapshot
 # Discard snapshot
 lvremove vg-main/foo-snapshot
 
+
+# Fix thin volume broken after power loss
+lvconvert --repair vg-main/vg-main_thinpool
+lvremove vg-main/vg-main_thinpool_meta0
+reboot # or activate each thin volume manuall
