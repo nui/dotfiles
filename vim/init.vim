@@ -107,8 +107,10 @@ let g:tcomment#filetype#guess_jinja = 1
 let g:fzf_vim = {}
 let g:fzf_vim.command_prefix = 'Fzf'
 if executable('fzf')
+    nnoremap <leader>ff :FzfFiles<CR>
     nnoremap <leader>rg :FzfRg<Space>
 else
+    nnoremap <silent><leader>ff :echo "error: fzf is not installed"<CR>
     nnoremap <silent><leader>rg :echo "error: fzf is not installed"<CR>
 endif
 
