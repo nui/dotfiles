@@ -25,8 +25,12 @@ if [[ -d $NMK_HOME ]]; then
             if is_git_repo $_PLUGIN_DIR; then
                 print -- "\n${_PLUGIN}: "
                 pushd -q $_PLUGIN_DIR
-                git remote update --prune
-                git reset --hard origin/HEAD
+                HEAD_BRANCH=$(git remote show origin | grep 'HEAD branch')
+                HEAD_BRANCH=${HEAD_BRANCH#"  HEAD branch: "}
+                if [[ -n $HEAD_BRANCH ]]; then
+                    git remote update --prune
+                    git reset --hard origin/$HEAD_BRANCH
+                fi
                 popd -q
             # Otherwise, clone it
             else
