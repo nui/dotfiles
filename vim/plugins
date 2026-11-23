@@ -13,6 +13,7 @@ vim-airline         https://github.com/vim-airline/vim-airline.git
 vim-airline-themes  https://github.com/vim-airline/vim-airline-themes.git
 vim-dispatch        https://github.com/tpope/vim-dispatch.git
 vim-fugitive        https://github.com/tpope/vim-fugitive.git
+vim-nftables        https://github.com/nfnty/vim-nftables.git
 vim-repeat          https://github.com/tpope/vim-repeat.git
 vim-surround        https://github.com/tpope/vim-surround.git
 vim-visual-multi    https://github.com/mg979/vim-visual-multi.git
